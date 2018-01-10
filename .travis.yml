@@ -1,0 +1,20 @@
+language: ruby
+rvm:
+  - 2.3.3
+script:
+  - bundle install
+  - bundle exec jekyll build
+after_success:
+  - git clone https://github.com/jevics/jevics.github.io.git
+  - cd jevics.github.io && rm -rf * && cp -r ../_site/* .
+  - git config user.name "jevics"
+  - git config user.email "zxf_668899@163.com"
+  - git add --all .
+  - git commit -m "Travis CI Auto Builder"
+  - git push --force https://$JEKYLL_GITHUB_TOKEN@github.com/jevics/jevics.github.io.git master
+branches:
+  only:
+    - blog
+env:
+  global:
+    - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
