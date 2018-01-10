@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//piwik.mritd.me/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//piwik.mritd.me/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Elasticsearch常用操作(一) &mdash; Jevic</title>
+    <link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css">
+    <link rel="stylesheet" href="/assets/vendor/primer-markdown/dist/user-content.min.css">
+    <link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css">
+    <link rel="stylesheet" href="/assets/css/components/collection.css">
+    <link rel="stylesheet" href="/assets/css/components/repo-card.css">
+    <link rel="stylesheet" href="/assets/css/sections/repo-list.css">
+    <link rel="stylesheet" href="/assets/css/sections/mini-repo-list.css">
+    <link rel="stylesheet" href="/assets/css/components/boxed-group.css">
+    <link rel="stylesheet" href="/assets/css/globals/common.css">
+    <link rel="stylesheet" href="/assets/vendor/share.js/dist/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/globals/responsive.css">
+    <link rel="stylesheet" href="/assets/css/posts/index.css">
+    <!-- Latest compiled and minified CSS -->
+    
+
+    
+    <link rel="canonical" href="http://jevic.cn/2017/07/21/elk-elasticsearch-common-operation/">
+    <link rel="alternate" type="application/atom+xml" title="Jevic" href="/feed.xml">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <meta property="og:title" content="Elasticsearch常用操作(一)">
+      
+    <meta name="keywords" content="elk elasticsearch">
+    <meta name="og:keywords" content="elk elasticsearch">
+      
+    <meta name="description" content="sql接口查询">
+    <meta name="og:description" content="sql接口查询">
+      
+    
+    
+        
+    
+    <meta property="og:url" content="http://jevic.cn/2017/07/21/elk-elasticsearch-common-operation/">
+    <meta property="og:site_name" content="Jevic">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="zh_CN" />
+    
+    <meta property="article:published_time" content="2017-07-21">
+    
+    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/js/jquery-ui.js"></script>
+    <script type="text/javascript">
+    function toggleMenu() {
+        var nav = document.getElementsByClassName("site-header-nav")[0];
+        if (nav.style.display == "inline-flex") {
+          nav.style.display = "none";
+        } else {
+          nav.style.display = "inline-flex";
+        }
+    }
+    </script>
+</head>
+<body class="" data-mz="">
+    <header class="site-header">
+        <div class="container">
+            <h1><a href="/" title="Jevic"><span class="octicon octicon-mark-github"></span> Jevic</a></h1>
+            <button class="collapsed mobile-visible" type="button" onclick="toggleMenu();">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <nav class="site-header-nav" role="navigation">
+                
+                <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a>
+                
+                <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a>
+                
+                <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a>
+                
+                <a href="/open-source/" class=" site-header-nav-item" target="" title="开源">开源</a>
+                
+                <a href="/links/" class=" site-header-nav-item" target="" title="链接">链接</a>
+                
+                <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a>
+                
+            </nav>
+        </div>
+    </header>
+    <!-- / header -->
+
+    <section class="collection-head small geopattern" data-pattern-id="Elasticsearch常用">
+<div class="container">
+  <div class="columns">
+    <div class="column three-fourths">
+      <div class="collection-title">
+        <h1 class="collection-header">Elasticsearch常用操作(一)</h1>
+        <div class="collection-info">
+          
+          <span class="meta-info">
+            <span class="octicon octicon-calendar"></span> 2017/07/21
+          </span>
+          
+          
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href="/categories/#ELK" title="ELK">ELK</a>
+          </span>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<!-- / .banner -->
+<section class="container content">
+<div class="columns">
+  <div class="column three-fourths" >
+    <article class="article-content markdown-body">
+    <h1 id="sql接口查询">sql接口查询</h1>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sql 2.x
+curl http://es-node/_sql <span class="nt">-d</span> <span class="s2">"SELECT count(*) FROM index-test/type where timestamp=1484048580"</span>
+
+sql 5.x
+http://es-node/_sql?sql<span class="o">=</span>SELECT count<span class="o">(</span><span class="k">*</span><span class="o">)</span> FROM index-test where @timestamp&gt;<span class="o">=</span>149925060000 and @timestamp&lt;1499254200000
+
+</code></pre></div></div>
+
+<h1 id="冷热分片">冷热分片</h1>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -XPUT $URL/${Inx}-${date}/_settings -d '{ "index.routing.allocation.include.zone": "hot"}'
+
+curl -XPUT $URL/${Inx}-${date_ops}/_settings -d '{ "index.routing.allocation.include.zone": "stale"}'
+
+</code></pre></div></div>
+
+<h1 id="索引优化分段">索引优化分段</h1>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2.x 
+curl -XPOST node-es:9200/teset-2017.07.05/_optimize?max_num_segments=1&amp;wait_for_merge=false
+
+5.x
+curl -XPOST node-es:9200/test-2017.07.05/_forcemerge?max_num_segments=1
+</code></pre></div></div>
+<h1 id="搜索">搜索</h1>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET index/doc/_search
+GET index/doc/_search?pretty
+curl node-es:9200/index/doc/_search |python -mjson.tool
+</code></pre></div></div>
+<h1 id="删除">删除</h1>
+<ul>
+  <li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.5/docs-delete-by-query.html#docs-delete-by-query">官方API文档</a></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>推荐使用: curl -XPOST _delete_by_query?scroll_size=2000&amp;wait_for_completion=false
+
+curl -XPOST node-es:9200/test-index/_delete_by_query -d '
+{
+  "query": { 
+    "match": {
+      "message": "some message"
+    }
+  }
+}'
+
+2.x 
+curl -XDELETE node-es:9200/test-index/_query -d '{
+"query": { 
+    "match": {
+      "message": "some message"
+    }
+  }
+}'
+
+查询删除任务:
+5.x
+GET _tasks?detailed=true&amp;actions=*/delete/byquery
+2.x
+GET _tasks?detailed=true&amp;actions=*/delete/by_query
+</code></pre></div></div>
+
+<h1 id="任务查询-_tasks">任务查询 _tasks</h1>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html">官网API文档</a></p>
+
+<ul>
+  <li>es 2.x</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /tasks
+GET _cluster/pending_tasks
+GET /_tasks?actions=*/list*
+GET /_tasks?actions=*reindex,*by_query
+返回的结果:
+{
+.....
+      "tasks": {
+        "w8S8uYR9ThelFe7u5blX-Q:466799605": {
+          "node": "w8S8uYR9ThelFe7u5blX-Q",
+          "id": 466799605,
+          "type": "transport",
+          "action": "indices:data/write/delete/by_query",
+          "start_time_in_millis": 1499846410168,
+          "running_time_in_nanos": 527881720186
+.....
+}
+
+
+</code></pre></div></div>
+<ul>
+  <li>es 5.x</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET _cat/tasks?v&amp;time
+GET _tasks?detailed=true&amp;actions=*/delete/byquery
+GET _tasks?pretty&amp;detailed&amp;actions=*reindex,*byquery
+返回结果:
+{
+.....
+      "tasks": {
+        "RiuComp3TOWhz0y804Ym7A:55597577": {
+          "node": "RiuComp3TOWhz0y804Ym7A",
+          "id": 55597577,
+          "type": "transport",
+          "action": "indices:data/write/delete/byquery",
+          "status": {
+            "total": 47683364,
+            "updated": 0,
+            "created": 0,
+            "deleted": 15294000,
+            "batches": 7648,
+            "version_conflicts": 0,
+            "noops": 0,
+            .....
+      }
+    }
+  }
+}
+
+取消任务:
+POST _tasks/RiuComp3TOWhz0y804Ym7A:55597577/_cancel
+
+
+</code></pre></div></div>
+
+<h1 id="添加模板">添加模板</h1>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PUT  /_template/test
+{
+  
+  "template":"test-*",
+  "settings" : {
+    "index.refresh_interval" : "60s"
+  }
+}
+</code></pre></div></div>
+<h1 id="查询模板">查询模板</h1>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET _template/yflive
+
+curl es-3:9200/bank/_count?pretty -d '
+{ 
+"query": {
+   "match" : { "city" : "SZ" }
+}
+}'
+
+</code></pre></div></div>
+
+<h1 id="调整查询窗口大小">调整查询窗口大小</h1>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>get index-test/_settings
+
+PUT index-test/_settings
+{ 
+  "index" : { 
+    "max_result_window" : 500000 
+  } 
+}
+</code></pre></div></div>
+
+<h1 id="磁盘配额">磁盘配额</h1>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PUT _cluster/settings
+{
+    "transient" : {
+        "cluster.routing.allocation.disk.watermark.low" : "90%",
+        "cluster.routing.allocation.disk.watermark.high" : "10gb"
+    }
+}
+
+</code></pre></div></div>
+
+<h1 id="更新文档数据">更新文档数据</h1>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>POST nginx-log/logs/AVxiwZcu_Z9aU351KXOL/_update
+{
+  "doc": {
+    "value" : 732439
+  }
+}
+
+</code></pre></div></div>
+
+<h1 id="指定索引分片分配到某个特定主机">指定索引分片分配到某个特定主机</h1>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/shard-allocation-filtering.html">官网文档</a></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PUT test/_settings
+{
+  "index.routing.allocation.include._ip": "192.168.2.*"
+}
+
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html">Index Modules</a></li>
+</ul>
+
+<p>转载请注明出处，本文采用 <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC4.0</a> 协议授权</p>
+
+    </article>
+    <div class="share">
+      <div class="share-component"></div>
+
+    </div>
+    <div class="comment">
+      
+    
+        
+        <!-- Disqus Protection, see https://github.com/mzlogin/mzlogin.github.io/issues/2 -->
+        
+            <div id="disqus_thread"></div>
+            <script>
+                var disqus_config = function () {
+                    this.page.url = 'http://jevic.cn/2017/07/21/elk-elasticsearch-common-operation/';
+                    this.page.identifier = '/2017/07/21/elk-elasticsearch-common-operation/';
+                    this.page.title = 'Elasticsearch常用操作(一)';
+                };
+                (function() { // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
+                    s.type = 'text/javascript';
+                    s.async = true;
+                    var shortname = 'jevic-cn';
+                    s.src = '//' + shortname + '.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        
+    
+
+
+    </div>
+  </div>
+  <div class="column one-fourth">
+    
+<h3>Search</h3>
+<div id="site_search">
+    <input type="text" id="search_box" placeholder="Search">
+    <button class="btn btn-default" id="site_search_do"><span class="octicon octicon-search"></span></button>
+</div>
+
+<ul id="search_results"></ul>
+
+<link rel="stylesheet" type="text/css" href="/assets/css/modules/sidebar-search.css">
+<script src="/assets/js/lunr.min.js"></script>
+<script src="/assets/js/search.js"></script>
+
+    
+<h3>Post Directory</h3>
+<div id="post-directory-module" class="mobile-hidden">
+  <section class="post-directory">
+  <!-- Links that trigger the jumping -->
+  <!-- Added by javascript below -->
+  <dl></dl>
+  </section>
+</div>
+
+<script src="/assets/js/jquery.toc.js"></script>
+
+  </div>
+</div>
+</section>
+<!-- /section.content -->
+
+    <footer class="container">
+        <div class="site-footer" role="contentinfo">
+            <div class="copyright left mobile-block">
+                    © 2017
+                    <span title="Jevic">Jevic</span>
+                    <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+            </div>
+
+            <ul class="site-footer-links right mobile-hidden">
+                <li>
+                    <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC4.0</a>
+                </li>
+                <li>
+                    <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+                </li>
+            </ul>
+            <a href="http://github.com/jevic/jevic.github.io" target="_blank" aria-label="view source code">
+                <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+            </a>
+            <ul class="site-footer-links mobile-hidden">
+                
+                <li>
+                    <a href="/" title="首页" target="">首页</a>
+                </li>
+                
+                <li>
+                    <a href="/categories/" title="分类" target="">分类</a>
+                </li>
+                
+                <li>
+                    <a href="/wiki/" title="维基" target="">维基</a>
+                </li>
+                
+                <li>
+                    <a href="/open-source/" title="开源" target="">开源</a>
+                </li>
+                
+                <li>
+                    <a href="/links/" title="链接" target="">链接</a>
+                </li>
+                
+                <li>
+                    <a href="/about/" title="关于" target="">关于</a>
+                </li>
+                
+                <li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li>
+            </ul>
+
+        </div>
+    </footer>
+    <!-- / footer -->
+    <script src="/assets/vendor/share.js/dist/js/share.min.js"></script>
+    <script src="/assets/js/geopattern.js"></script>
+    <script src="/assets/js/prism.js"></script>
+    <link rel="stylesheet" href="/assets/css/globals/prism.css">
+    <script>
+      jQuery(document).ready(function($) {
+        // geopattern
+        $('.geopattern').each(function(){
+          $(this).geopattern($(this).data('pattern-id'));
+        });
+       // hljs.initHighlightingOnLoad();
+      });
+    </script>
+    
+    <div style="display:none">
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-82387173-1', 'auto');
+        ga('send', 'pageview');
+
+      </script>
+    </div>
+    
+</body>
+</html>
