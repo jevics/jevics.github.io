@@ -14,7 +14,7 @@ after_success:
   - git push --force https://$JEKYLL_GITHUB_TOKEN@github.com/jevics/jevics.github.io.git master
 branches:
   only:
-    - blog
+    - jekyll
 env:
   global:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
