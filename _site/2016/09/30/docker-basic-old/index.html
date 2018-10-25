@@ -174,25 +174,25 @@ rpm <span class="nt">--import</span> https://www.elrepo.org/RPM-GPG-KEY-elrepo.o
 rpm <span class="nt">-Uvh</span> http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
 
 3. 在yum的ELRepo源中，mainline 为最新版本的内核
-yum <span class="nt">--enablerepo</span><span class="o">=</span>elrepo-kernel install  kernel-ml-devel kernel-ml <span class="nt">-y</span>
+yum <span class="nt">--enablerepo</span><span class="o">=</span>elrepo-kernel <span class="nb">install  </span>kernel-ml-devel kernel-ml <span class="nt">-y</span>
 
 4. 修改内核启动顺序，默认启动的顺序应该为1,升级以后内核是往前面插入，为0    
 grub2-set-default 0
 5. 重启系统    
 reboot
 6. 查看 内核版本    
-uname <span class="nt">-r</span> 
+<span class="nb">uname</span> <span class="nt">-r</span> 
 
 </code></pre></div></div>
 
 <h3 id="install">install</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master ~]# yum install <span class="nt">-y</span> yum-utils
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master ~]# yum <span class="nb">install</span> <span class="nt">-y</span> yum-utils
 <span class="o">[</span>root@master ~]# yum-config-manager <span class="se">\</span>
     <span class="nt">--add-repo</span> <span class="se">\</span>
     https://docs.docker.com/engine/installation/linux/repo_files/centos/docker.repo
 <span class="o">[</span>root@master ~]# yum <span class="nt">-y</span> check-update
-<span class="o">[</span>root@master ~]# yum <span class="nt">-y</span> install docker-engine
+<span class="o">[</span>root@master ~]# yum <span class="nt">-y</span> <span class="nb">install </span>docker-engine
 
 加速器：
 <span class="c"># curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://df4b377c.m.daocloud.io</span>
@@ -226,8 +226,8 @@ docker <span class="nt">--help</span>
 <span class="nt">-i</span>：交互式  <span class="nt">-t</span>: 打开一个终端 <span class="nt">-d</span> 后台运行 <span class="o">[</span>不可同时使用] <span class="nt">--rm</span> 终止后立刻删除
 <span class="o">[</span>root@docker ~]# docker run <span class="o">[</span><span class="nt">--rm</span><span class="o">]</span> <span class="o">[</span><span class="nt">-d</span><span class="o">]</span> <span class="nt">-i</span> <span class="nt">-t</span> centos7 /bin/sh    进入docker镜像
 <span class="o">[</span>root@docker ~]# docker ps <span class="nt">-l</span> 
-<span class="o">[</span>root@docker ~]# docker stop id
-<span class="o">[</span>root@docker ~]# docker start id
+<span class="o">[</span>root@docker ~]# docker stop <span class="nb">id</span>
+<span class="o">[</span>root@docker ~]# docker start <span class="nb">id</span>
 <span class="o">[</span>root@docker ~]# docker inspect mytest   【检查容器运行状态信息】
 
 
@@ -236,18 +236,18 @@ docker <span class="nt">--help</span>
 
 <span class="o">[</span>root@docker ~]# docker logs <span class="nt">-f</span> mysql
 
-<span class="o">[</span>root@docker ~]# docker <span class="nb">exec</span> <span class="nt">-it</span> id /bin/bash  【exit退出后，容器依旧运行】
+<span class="o">[</span>root@docker ~]# docker <span class="nb">exec</span> <span class="nt">-it</span> <span class="nb">id</span> /bin/bash  【exit退出后，容器依旧运行】
 
-<span class="o">[</span>root@docker ~]# docker rm id  删除容器
+<span class="o">[</span>root@docker ~]# docker <span class="nb">rm id  </span>删除容器
 
 <span class="o">[</span>root@docker ~]# docker rmi images_name 删除镜像
 <span class="o">[</span>root@docker ~]# docker rmi <span class="k">$(</span>docker images <span class="nt">-aq</span> <span class="nt">-f</span> <span class="s2">"dangling=true"</span><span class="k">)</span>  删除丢了标签的镜像
 
-<span class="o">[</span>root@docker ~]# docker ps <span class="nt">-a</span> | <span class="nb">grep</span> <span class="s2">"Exited"</span> | awk <span class="s1">'{print $1 }'</span>|xargs docker stop
-<span class="o">[</span>root@docker ~]# docker ps <span class="nt">-a</span> | <span class="nb">grep</span> <span class="s2">"Exited"</span> | awk <span class="s1">'{print $1 }'</span>|xargs docker rm
+<span class="o">[</span>root@docker ~]# docker ps <span class="nt">-a</span> | <span class="nb">grep</span> <span class="s2">"Exited"</span> | <span class="nb">awk</span> <span class="s1">'{print $1 }'</span>|xargs docker stop
+<span class="o">[</span>root@docker ~]# docker ps <span class="nt">-a</span> | <span class="nb">grep</span> <span class="s2">"Exited"</span> | <span class="nb">awk</span> <span class="s1">'{print $1 }'</span>|xargs docker <span class="nb">rm
 
 
-Docker提供了一个非常强大的命令diff，它可以列出容器内发生变化的文件和目录。
+</span>Docker提供了一个非常强大的命令diff，它可以列出容器内发生变化的文件和目录。
 这些变化包括添加（A-add）、删除（D-delete）、修改（C-change）。
 该命令便于Debug，并支持快速的共享环境。
 <span class="o">[</span>root@docker ~]# docker diff container
@@ -256,7 +256,7 @@ save 【持久化镜像】导入导出：
 <span class="o">[</span>root@docker ~]# docker save centos:7 <span class="o">&gt;</span> /home/save.tar
 <span class="o">[</span>root@docker ~]# docker load &lt; /home/save.tar
 <span class="nb">export</span>【持久化容器】导入导出：
-<span class="o">[</span>root@docker ~]# docker <span class="nb">export</span> <span class="o">[</span>id] <span class="o">&gt;</span> <span class="o">[</span>imagesname.tar]   导出镜像
+<span class="o">[</span>root@docker ~]# docker <span class="nb">export</span> <span class="o">[</span><span class="nb">id</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">[</span>imagesname.tar]   导出镜像
 <span class="o">[</span>root@docker ~]# <span class="nb">cat</span> /home/export.tar | docker import - busybox-1-export:latest
 远程路径导入：
 <span class="o">[</span>root@docker ~]# docker import http://example.com/test.tar
@@ -272,8 +272,8 @@ Note:image相当于类，container相当于实例，不过可以动态给实例�
 
 
 将容器中的文件拷贝到主机上
-Usage: docker cp CONTAINER:PATH HOSTPATH
-<span class="o">[</span>root@docker ~]# docker cp testip:/tmp/testaa /tmp
+Usage: docker <span class="nb">cp </span>CONTAINER:PATH HOSTPATH
+<span class="o">[</span>root@docker ~]# docker <span class="nb">cp </span>testip:/tmp/testaa /tmp
 
 
 <span class="nt">-p</span>:指定容器启动后docker上运行的端口映射，第一个为主机端口第二个为容器里的端口
@@ -345,7 +345,7 @@ Docker 目前支持的联合文件系统种类包括 AUFS, btrfs, vfs 和 Device
 <h2 id="ubuntu">Ubuntu</h2>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>升级内核：
-<span class="nv">$ </span><span class="nb">sudo </span>apt-get install <span class="nt">-y</span> <span class="nt">--install-recommends</span> linux-generic-lts-xenial
+<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="nt">--install-recommends</span> linux-generic-lts-xenial
 <span class="nv">$ </span>reboot
 
   

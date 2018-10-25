@@ -140,7 +140,7 @@
 <span class="nb">set</span> <span class="nt">-e</span>
 <span class="c">## 镜像名称</span>
 <span class="nv">REGS</span><span class="o">=</span><span class="s2">"registry:latest"</span>
-<span class="nv">DATES</span><span class="o">=</span><span class="sb">`</span>date <span class="s1">'+%Y-%m-%d %H:%M:%S'</span><span class="sb">`</span>
+<span class="nv">DATES</span><span class="o">=</span><span class="sb">`</span><span class="nb">date</span> <span class="s1">'+%Y-%m-%d %H:%M:%S'</span><span class="sb">`</span>
 
 <span class="c">## 判断是否已存在仓库运行</span>
 <span class="nv">PORTS</span><span class="o">=</span><span class="sb">`</span>netstat <span class="nt">-tnlp</span>|grep 443|wc <span class="nt">-l</span><span class="sb">`</span>
@@ -184,7 +184,7 @@ docker run <span class="nt">-d</span> <span class="se">\</span>
 <span class="c">## 初始化目录</span>
 <span class="c">## </span>
 <span class="k">if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-f</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/auth/htpasswd <span class="nt">-o</span> <span class="o">!</span> <span class="nt">-d</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/certs/ca.crt <span class="o">]</span><span class="p">;</span><span class="k">then
-    </span>mkdir <span class="nt">-p</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/<span class="o">{</span>auth,certs<span class="o">}</span>
+    </span><span class="nb">mkdir</span> <span class="nt">-p</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/<span class="o">{</span>auth,certs<span class="o">}</span>
 <span class="k">fi</span>
 
 <span class="c">## 生成密码文件</span>
@@ -209,10 +209,10 @@ APP
 <span class="k">fi
 
 if</span> <span class="o">[</span> <span class="nt">-f</span> /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>/ca.crt <span class="o">]</span><span class="p">;</span><span class="k">then
-     </span>rm <span class="nt">-rf</span> /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>
+     </span><span class="nb">rm</span> <span class="nt">-rf</span> /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>
 <span class="k">else 
-   </span>mkdir <span class="nt">-p</span> /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>
-   cp <span class="nt">-a</span> certs/ca.crt /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>/
+   </span><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>
+   <span class="nb">cp</span> <span class="nt">-a</span> certs/ca.crt /etc/docker/certs.d/<span class="k">${</span><span class="nv">DOMAIN</span><span class="k">}</span>/
 <span class="k">fi</span>
 
 <span class="c">## 重启 Docker</span>

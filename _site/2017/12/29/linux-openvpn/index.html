@@ -136,8 +136,8 @@
     <article class="article-content markdown-body">
     <h2 id="配置安装环境">配置安装环境</h2>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn ~]# yum install <span class="nt">-y</span> gcc gcc-c++ pam-devel cmake openssl penssl-devel
-<span class="o">[</span>root@openvpn ~]# yum install <span class="nt">-y</span> lrzsz    <span class="o">(</span>Secure 上传下载<span class="o">)</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn ~]# yum <span class="nb">install</span> <span class="nt">-y</span> gcc gcc-c++ pam-devel cmake openssl penssl-devel
+<span class="o">[</span>root@openvpn ~]# yum <span class="nb">install</span> <span class="nt">-y</span> lrzsz    <span class="o">(</span>Secure 上传下载<span class="o">)</span>
 
 </code></pre></div></div>
 
@@ -160,7 +160,7 @@ net.ipv4.ip_forward <span class="o">=</span> 1
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn ~]# systemctl disable firewalld
 <span class="o">[</span>root@openvpn ~]# systemctl stop firewalld
-<span class="o">[</span>root@openvpn ~]# yum install iptables-services <span class="nt">-y</span>
+<span class="o">[</span>root@openvpn ~]# yum <span class="nb">install </span>iptables-services <span class="nt">-y</span>
 <span class="o">[</span>root@openvpn ~]# iptables <span class="nt">-F</span> <span class="o">&amp;&amp;</span> iptables <span class="nt">-t</span> nat <span class="nt">-F</span>  （清除所有规则）
 <span class="o">[</span>root@openvpn ~]# iptables <span class="nt">-t</span> nat <span class="nt">-nL</span> <span class="o">&amp;&amp;</span> iptables <span class="nt">-nL</span>   
 <span class="o">[</span>root@openvpn ~]# iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> eth0 <span class="nt">-s</span> 10.8.0.0/24 <span class="nt">-j</span> MASQUERADE
@@ -188,18 +188,18 @@ MASQUERADE  all  <span class="nt">--</span>  10.8.0.0/24          0.0.0.0/0
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn ~]# <span class="nb">tar</span> <span class="nt">-zxf</span> lzo-2.06.tar.gz 
 <span class="o">[</span>root@openvpn ~]# <span class="nb">tar</span> <span class="nt">-zxf</span> openvpn-2.2.2.tar.gz 
 <span class="o">[</span>root@openvpn ~]#cd lzo-2.06
-<span class="o">[</span>root@openvpn lzo-2.06]# ./configure <span class="o">&amp;&amp;</span> make <span class="o">&amp;&amp;</span> make install
+<span class="o">[</span>root@openvpn lzo-2.06]# ./configure <span class="o">&amp;&amp;</span> make <span class="o">&amp;&amp;</span> make <span class="nb">install</span>
 <span class="o">[</span>root@openvpn ~]# <span class="nb">cd </span>openvpn-2.2.2
 <span class="o">[</span>root@openvpn openvpn-2.2.2]# <span class="nb">ls</span>
 <span class="o">[</span>root@openvpn openvpn-2.2.2]# ./configure 
-<span class="o">[</span>root@openvpn openvpn-2.2.2]# make <span class="o">&amp;&amp;</span> make install
+<span class="o">[</span>root@openvpn openvpn-2.2.2]# make <span class="o">&amp;&amp;</span> make <span class="nb">install</span>
 
 </code></pre></div></div>
 
 <h2 id="配置openvpn">配置openVPN</h2>
 <h3 id="创建配置目录并编辑ca证书变量文件">创建配置目录并编辑CA证书变量文件</h3>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn ~]# mkdir /etc/openvpn
-<span class="o">[</span>root@openvpn ~]# cp <span class="nt">-R</span> openvpn-2.2.2/easy-rsa/ /etc/openvpn/
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn ~]# <span class="nb">mkdir</span> /etc/openvpn
+<span class="o">[</span>root@openvpn ~]# <span class="nb">cp</span> <span class="nt">-R</span> openvpn-2.2.2/easy-rsa/ /etc/openvpn/
 <span class="o">[</span>root@openvpn ~]# <span class="nb">cd</span> /etc/openvpn/easy-rsa/2.0/
 
 <span class="o">[</span>root@openvpn 2.0]# vi vars 
@@ -220,7 +220,7 @@ MASQUERADE  all  <span class="nt">--</span>  10.8.0.0/24          0.0.0.0/0
 <h3 id="初始化ca-证书">初始化CA 证书</h3>
 <h4 id="导入环境变量">导入环境变量</h4>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn 2.0]# <span class="nb">source</span> ./vars
-NOTE: If you run ./clean-all, I will be doing a rm <span class="nt">-rf</span> on /etc/openvpn/easy-rsa/2.0/keys
+NOTE: If you run ./clean-all, I will be doing a <span class="nb">rm</span> <span class="nt">-rf</span> on /etc/openvpn/easy-rsa/2.0/keys
 <span class="o">[</span>root@openvpn 2.0]# ./clean-all 
 </code></pre></div></div>
 
@@ -288,13 +288,13 @@ Data Base Updated
 
 <h4 id="复制服务器证书文件到etcopenvpn">复制服务器证书文件到/etc/openvpn/</h4>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn keys]# cp dh1024.pem ca.crt server.crt server.key /etc/openvpn/
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn keys]# <span class="nb">cp </span>dh1024.pem ca.crt server.crt server.key /etc/openvpn/
 <span class="o">[</span>root@openvpn keys]# sz ca.crt client.crt client.key <span class="o">(</span>下载到本地，客户端使用<span class="o">)</span>
 </code></pre></div></div>
 
 <h4 id="复制服务器配置文件到etcopenvpn下并编辑添加配置相关参数">复制服务器配置文件到/etc/openvpn下，并编辑添加配置相关参数：</h4>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn keys]# cp /root/openvpn-2.2.2/sample-config-files/server.conf  /etc/openvpn/server.conf
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@openvpn keys]# <span class="nb">cp</span> /root/openvpn-2.2.2/sample-config-files/server.conf  /etc/openvpn/server.conf
 <span class="o">[</span>root@openvpn keys]# vi /etc/openvpn/server.conf
 <span class="nb">local </span>10.1.50.222    <span class="c"># VPN服务器地址</span>
 port 3307    <span class="c"># 端口号</span>
@@ -362,26 +362,26 @@ key client.key
 
 <span class="c">## 创建证书文件</span>
 <span class="nb">.</span> vars
-<span class="o">(</span>sleep 1
+<span class="o">(</span><span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="nv">$KONG</span>
-sleep 1
+<span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="nv">$KONG</span>
-sleep 1
+<span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="nv">$KONG</span>
-sleep 1
+<span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="nv">$KONG</span>
-sleep 1
+<span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="nv">$KONG</span>
-sleep 1
+<span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"y"</span>
-sleep 1
+<span class="nb">sleep </span>1
 <span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"y"</span><span class="o">)</span>|./build-key <span class="nv">$1</span>
 
 <span class="nb">cd </span>keys/
 <span class="c">## 修改客户端配置文件</span>
 <span class="c">## cp openvpn-2.2.2/sample-config-files/client.conf /etc/openvpn/easy-rsa/2.0/keys/client.ovpn</span>
-sed <span class="nt">-i</span> <span class="s2">"s/client.crt/</span><span class="nv">$1</span><span class="s2">.crt/g"</span> client.ovpn
-sed <span class="nt">-i</span> <span class="s2">"s/client.key/</span><span class="nv">$1</span><span class="s2">.key/g"</span> client.ovpn
+<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s/client.crt/</span><span class="nv">$1</span><span class="s2">.crt/g"</span> client.ovpn
+<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s/client.key/</span><span class="nv">$1</span><span class="s2">.key/g"</span> client.ovpn
 
 <span class="c">## 打包文件并sz上传到本地</span>
 <span class="c">## </span>
@@ -389,8 +389,8 @@ sed <span class="nt">-i</span> <span class="s2">"s/client.key/</span><span class
 sz <span class="nv">$1</span>.tar.gz
 
 <span class="c">## 恢复默认客户端配置文件</span>
-sed <span class="nt">-i</span> <span class="s2">"s/</span><span class="nv">$1</span><span class="s2">/client/g"</span> client.ovpn
-sed <span class="nt">-i</span> <span class="s2">"s/</span><span class="nv">$1</span><span class="s2">/client/g"</span> client.ovpn
+<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s/</span><span class="nv">$1</span><span class="s2">/client/g"</span> client.ovpn
+<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s/</span><span class="nv">$1</span><span class="s2">/client/g"</span> client.ovpn
 
 </code></pre></div></div>
 

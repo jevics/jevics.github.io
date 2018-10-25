@@ -135,9 +135,9 @@
 
 <h2 id="环境准备">环境准备</h2>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Server ~]# yum install <span class="nt">-y</span> epel-release
-<span class="o">[</span>root@Server ~]# yum install <span class="nt">-y</span> php php-gd php-mysql php-bcmath php-mbstring php-xml curl curl-devel net-snmp net-snmp-devel perl-DBI
-<span class="o">[</span>root@Server ~]# yum install <span class="nt">-y</span> httpd 
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Server ~]# yum <span class="nb">install</span> <span class="nt">-y</span> epel-release
+<span class="o">[</span>root@Server ~]# yum <span class="nb">install</span> <span class="nt">-y</span> php php-gd php-mysql php-bcmath php-mbstring php-xml curl curl-devel net-snmp net-snmp-devel perl-DBI
+<span class="o">[</span>root@Server ~]# yum <span class="nb">install</span> <span class="nt">-y</span> httpd 
 
 ntpdate ntp.sjtu.edu.cn
 </code></pre></div></div>
@@ -153,14 +153,14 @@ ntpdate ntp.sjtu.edu.cn
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget http://ftp.kernel.yunfan.com/soft/yangjie/bigdata/mysql57-community-release-el7-9.noarch.rpm
 rpm <span class="nt">-ivh</span> mysql57-community-release-el7-9.noarch.rpm
-yum install mysql-server
+yum <span class="nb">install </span>mysql-server
 </code></pre></div></div>
 
 <ul>
   <li>mariadb</li>
 </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Server ~]# yum install <span class="nt">-y</span> mariadb mariadb-server 
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Server ~]# yum <span class="nb">install</span> <span class="nt">-y</span> mariadb mariadb-server 
 <span class="o">[</span>root@Server ~]# systemctl start mariadb
 <span class="o">[</span>root@Server ~]# systemctl <span class="nb">enable </span>mariadb
 
@@ -170,7 +170,7 @@ yum install mysql-server
   <li>安装服务端和客户端</li>
 </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Server ~]# yum install <span class="nt">-y</span> zabbix-server-mysql zabbix-web-mysql zabbix-agent
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Server ~]# yum <span class="nb">install</span> <span class="nt">-y</span> zabbix-server-mysql zabbix-web-mysql zabbix-agent
 </code></pre></div></div>
 
 <ul>
@@ -224,7 +224,7 @@ http://192.168.1.10/zabbix   访问链接安装
   <li>centos 6.x:</li>
 </ul>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum install <span class="nt">-y</span> http://repo.zabbix.com/zabbix/3.2/rhel/6/x86_64/zabbix-agent-3.2.4-1.el6.x86_64.rpm
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum <span class="nb">install</span> <span class="nt">-y</span> http://repo.zabbix.com/zabbix/3.2/rhel/6/x86_64/zabbix-agent-3.2.4-1.el6.x86_64.rpm
 </code></pre></div></div>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>centos 7.2:

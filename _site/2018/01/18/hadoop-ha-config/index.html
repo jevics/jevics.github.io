@@ -187,7 +187,7 @@
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hadoop@hdfs-master ~]<span class="nv">$ </span>
 <span class="o">[</span>hadoop@hdfs-master ~]<span class="nv">$ </span>ssh-keygen <span class="nt">-t</span> rsa
 <span class="o">[</span>hadoop@hdfs-master ~]<span class="nv">$ </span><span class="nb">cat</span> .ssh/id_rsa.pub <span class="o">&gt;&gt;</span> .ssh/authorized_keys
-<span class="o">[</span>hadoop@hdfs-master ~]<span class="nv">$ </span>chmod 600 .ssh/authorized_keys
+<span class="o">[</span>hadoop@hdfs-master ~]<span class="nv">$ </span><span class="nb">chmod </span>600 .ssh/authorized_keys
 <span class="o">[</span>hadoop@hdfs-master ~]<span class="nv">$ </span>
 复制master 公钥到各节点 步骤略.......
 <span class="o">[</span>hadoop@hdfs-master hadoop]<span class="err">$</span>

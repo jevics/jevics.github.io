@@ -165,9 +165,9 @@ zkCleanup.sh /datac/zk_data/version-2  20
 <span class="c">#Leave 66 files </span>
 <span class="nv">count</span><span class="o">=</span>66 
 <span class="nv">count</span><span class="o">=</span><span class="nv">$[$count</span>+1] 
-<span class="nb">ls</span> <span class="nt">-t</span> <span class="nv">$dataLogDir</span>/log.<span class="k">*</span> | tail <span class="nt">-n</span> +<span class="nv">$count</span> | xargs rm <span class="nt">-f</span> 
-<span class="nb">ls</span> <span class="nt">-t</span> <span class="nv">$dataDir</span>/snapshot.<span class="k">*</span> | tail <span class="nt">-n</span> +<span class="nv">$count</span> | xargs rm <span class="nt">-f</span> 
-<span class="nb">ls</span> <span class="nt">-t</span> <span class="nv">$logDir</span>/zookeeper.log.<span class="k">*</span> | tail <span class="nt">-n</span> +<span class="nv">$count</span> | xargs rm <span class="nt">-f</span>
+<span class="nb">ls</span> <span class="nt">-t</span> <span class="nv">$dataLogDir</span>/log.<span class="k">*</span> | <span class="nb">tail</span> <span class="nt">-n</span> +<span class="nv">$count</span> | xargs <span class="nb">rm</span> <span class="nt">-f</span> 
+<span class="nb">ls</span> <span class="nt">-t</span> <span class="nv">$dataDir</span>/snapshot.<span class="k">*</span> | <span class="nb">tail</span> <span class="nt">-n</span> +<span class="nv">$count</span> | xargs <span class="nb">rm</span> <span class="nt">-f</span> 
+<span class="nb">ls</span> <span class="nt">-t</span> <span class="nv">$logDir</span>/zookeeper.log.<span class="k">*</span> | <span class="nb">tail</span> <span class="nt">-n</span> +<span class="nv">$count</span> | xargs <span class="nb">rm</span> <span class="nt">-f</span>
 
 
 3. 配置文件中指定参数

@@ -145,10 +145,10 @@
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">sudo tar </span>zxf spark-2.0.2-bin-hadoop2.6.tgz <span class="nt">-C</span> /opt/source/
 <span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">cd</span> /opt/source
-<span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">sudo </span>mv spark-2.0.2-bin-hadoop2.6 spark
-<span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">sudo </span>chown spark:spark spark <span class="nt">-R</span>
+<span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">sudo mv </span>spark-2.0.2-bin-hadoop2.6 spark
+<span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">sudo chown </span>spark:spark spark <span class="nt">-R</span>
 <span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">cd </span>spark/conf
-<span class="o">[</span>spark@master ~]<span class="nv">$ </span>cp spark-env.sh.template spark-env.sh
+<span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">cp </span>spark-env.sh.template spark-env.sh
 
 修改Spark的配置文件spark-envspark.sh
 <span class="o">[</span>spark@master ~]<span class="nv">$ </span>vim spark-env.sh
@@ -159,14 +159,14 @@
 <span class="nb">export </span><span class="nv">SHARK_MASTER_MEM</span><span class="o">=</span>1G
 <span class="nb">export </span><span class="nv">SPARK_MASTER_IP</span><span class="o">=</span>192.168.11.130 
 
-<span class="o">[</span>spark@master ~]<span class="nv">$ </span>cp slaves.template slaves
+<span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">cp </span>slaves.template slaves
 <span class="o">[</span>spark@master ~]<span class="nv">$ </span><span class="nb">cat </span>slaves
 slave 
 <span class="o">[</span>spark@master ~]<span class="nv">$ </span>scp <span class="nt">-r</span> /opt/source/spark slave:/home/spark
 </code></pre></div></div>
 <h3 id="slave-节点">Slave 节点：</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>spark@slave ~]<span class="nv">$ </span><span class="nb">sudo </span>mv ~/spark /opt/source/  <span class="c"># 要注意目录权限本文统一为spark</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>spark@slave ~]<span class="nv">$ </span><span class="nb">sudo mv</span> ~/spark /opt/source/  <span class="c"># 要注意目录权限本文统一为spark</span>
 <span class="o">[</span>spark@slave <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span>ll
 drwxrwxr-x 10 spark spark  150 Dec 22 13:05 spark
 drwxr-xr-x 13 spark spark 4096 Dec 26 18:39 spark

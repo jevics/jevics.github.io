@@ -161,10 +161,10 @@ pathmunge <span class="o">()</span> <span class="o">{</span>
 <span class="k">if</span> <span class="o">[</span> <span class="nt">-x</span> /usr/bin/id <span class="o">]</span><span class="p">;</span> <span class="k">then
     if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$EUID</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
         <span class="c"># ksh workaround</span>
-        <span class="nv">EUID</span><span class="o">=</span><span class="sb">`</span>id <span class="nt">-u</span><span class="sb">`</span>
-        <span class="nv">UID</span><span class="o">=</span><span class="sb">`</span>id <span class="nt">-ru</span><span class="sb">`</span>
+        <span class="nv">EUID</span><span class="o">=</span><span class="sb">`</span><span class="nb">id</span> <span class="nt">-u</span><span class="sb">`</span>
+        <span class="nv">UID</span><span class="o">=</span><span class="sb">`</span><span class="nb">id</span> <span class="nt">-ru</span><span class="sb">`</span>
     <span class="k">fi
-    </span><span class="nv">USER</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span>id <span class="nt">-un</span><span class="sb">`</span><span class="s2">"</span>
+    </span><span class="nv">USER</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span><span class="nb">id</span> <span class="nt">-un</span><span class="sb">`</span><span class="s2">"</span>
     <span class="nv">LOGNAME</span><span class="o">=</span><span class="nv">$USER</span>
     <span class="nv">MAIL</span><span class="o">=</span><span class="s2">"/var/spool/mail/</span><span class="nv">$USER</span><span class="s2">"</span>
 <span class="k">fi</span>
@@ -192,7 +192,7 @@ pathmunge <span class="o">()</span> <span class="o">{</span>
 <span class="c"># Current threshold for system reserved uid/gids is 200</span>
 <span class="c"># You could check uidgid reservation validity in</span>
 <span class="c"># /usr/share/doc/setup-*/uidgid file</span>
-<span class="k">if</span> <span class="o">[</span> <span class="nv">$UID</span> <span class="nt">-gt</span> 199 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="s2">"</span><span class="sb">`</span>id <span class="nt">-gn</span><span class="sb">`</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"</span><span class="sb">`</span>id <span class="nt">-un</span><span class="sb">`</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$UID</span> <span class="nt">-gt</span> 199 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">id</span> <span class="nt">-gn</span><span class="sb">`</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">id</span> <span class="nt">-un</span><span class="sb">`</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
     </span><span class="nb">umask </span>002
 <span class="k">else
     </span><span class="nb">umask </span>022
@@ -213,7 +213,7 @@ done
 
 
 <span class="c">## 设置history格式</span>
-<span class="nb">export </span><span class="nv">HISTTIMEFORMAT</span><span class="o">=</span><span class="s2">"[%Y-%m-%d %H:%M:%S] [</span><span class="sb">`</span>who am i 2&gt;/dev/null| awk <span class="s1">'{print $NF}'</span>|sed <span class="nt">-e</span> <span class="s1">'s/[()]//g'</span><span class="sb">`</span><span class="s2">] "</span>
+<span class="nb">export </span><span class="nv">HISTTIMEFORMAT</span><span class="o">=</span><span class="s2">"[%Y-%m-%d %H:%M:%S] [</span><span class="sb">`</span><span class="nb">who </span>am i 2&gt;/dev/null| <span class="nb">awk</span> <span class="s1">'{print $NF}'</span>|sed <span class="nt">-e</span> <span class="s1">'s/[()]//g'</span><span class="sb">`</span><span class="s2">] "</span>
 <span class="c">## 实时记录用户在shell中执行的每一条命令</span>
 <span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">'\
 if [ -z "$OLD_PWD" ];then

@@ -203,14 +203,14 @@ The key<span class="s1">'s randomart image is:
 <h4 id="21-安装docker--所有主机操作相同-">2.1 安装Docker [ 所有主机操作相同 ]</h4>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.也直接给出安装步骤：
-<span class="o">[</span>root@master ~]# tee /etc/yum.repos.d/docker.repo <span class="o">&lt;&lt;-</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'  
+<span class="o">[</span>root@master ~]# <span class="nb">tee</span> /etc/yum.repos.d/docker.repo <span class="o">&lt;&lt;-</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'  
 [dockerrepo]   
 baseurl=https://yum.dockerproject.org/repo/main/centos/7/
 enabled=1
 gpgcheck=1
 gpgkey=https://yum.dockerproject.org/gpg
 </span><span class="no">EOF
-</span><span class="o">[</span>root@master ~]# yum install <span class="nt">-y</span> docker-engine
+</span><span class="o">[</span>root@master ~]# yum <span class="nb">install</span> <span class="nt">-y</span> docker-engine
 
 </code></pre></div></div>
 <h4 id="22-查看docker是否安装成功">2.2 查看Docker是否安装成功</h4>
@@ -317,7 +317,7 @@ Options:
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master ~]# docker swarm init <span class="nt">--listen-addr</span> 0.0.0.0
 Swarm initialized: current node <span class="o">(</span>73ju72f6nlyl9kiib7z5r0bsk<span class="o">)</span> is now a manager.
 To add a worker to this swarm, run the following <span class="nb">command</span>:
-    docker swarm join <span class="se">\</span>
+    docker swarm <span class="nb">join</span> <span class="se">\</span>
     <span class="nt">--token</span> SWMTKN-1-3fwuvslxnympc94nyvvsuxm67j8ricvsbz4dez5qui835gul7d-5b4rylzx9ny8xa9v3sbmmum5b <span class="se">\</span>
     192.168.11.130:2377
 To add a manager to this swarm, run <span class="s1">'docker swarm join-token manager'</span> and follow the instructions.
@@ -326,15 +326,15 @@ To add a manager to this swarm, run <span class="s1">'docker swarm join-token ma
 <span class="o">[</span>root@master ~]# docker swarm join-token worker
 To add a worker to this swarm, run the following <span class="nb">command</span>:
 
-    docker swarm join <span class="se">\</span>
+    docker swarm <span class="nb">join</span> <span class="se">\</span>
     <span class="nt">--token</span> SWMTKN-1-3fwuvslxnympc94nyvvsuxm67j8ricvsbz4dez5qui835gul7d-5b4rylzx9ny8xa9v3sbmmum5b <span class="se">\</span>
     192.168.11.130:2377
 
 加入节点：
-<span class="o">[</span>root@node01 ~]# docker swarm join <span class="se">\</span>
+<span class="o">[</span>root@node01 ~]# docker swarm <span class="nb">join</span> <span class="se">\</span>
 <span class="o">&gt;</span>     <span class="nt">--token</span> SWMTKN-1-3fwuvslxnympc94nyvvsuxm67j8ricvsbz4dez5qui835gul7d-5b4rylzx9ny8xa9v3sbmmum5b <span class="se">\</span>
 <span class="o">&gt;</span>     192.168.11.130:2377
-<span class="o">[</span>root@node02 ~]# docker swarm join <span class="se">\</span>
+<span class="o">[</span>root@node02 ~]# docker swarm <span class="nb">join</span> <span class="se">\</span>
 <span class="o">&gt;</span>     <span class="nt">--token</span> SWMTKN-1-3fwuvslxnympc94nyvvsuxm67j8ricvsbz4dez5qui835gul7d-5b4rylzx9ny8xa9v3sbmmum5b <span class="se">\</span>
 <span class="o">&gt;</span>     192.168.11.130:2377
 
@@ -355,10 +355,10 @@ exoa5djqpbjf4ded1n8wy9lz0    node01    Ready   Active
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master ~]# docker swarm join-token manager   管理节点token
 To add a manager to this swarm, run the following <span class="nb">command</span>:
 
-    docker swarm join <span class="se">\</span>
+    docker swarm <span class="nb">join</span> <span class="se">\</span>
     <span class="nt">--token</span> SWMTKN-1-3fwuvslxnympc94nyvvsuxm67j8ricvsbz4dez5qui835gul7d-2ia8ufgii6t1lfm33ix9fy32l <span class="se">\</span>
     192.168.11.130:2377
-<span class="o">[</span>root@ ~]# docker swarm join <span class="se">\</span>
+<span class="o">[</span>root@ ~]# docker swarm <span class="nb">join</span> <span class="se">\</span>
 <span class="o">&gt;</span>     <span class="nt">--token</span> SWMTKN-1-3fwuvslxnympc94nyvvsuxm67j8ricvsbz4dez5qui835gul7d-2ia8ufgii6t1lfm33ix9fy32l <span class="se">\</span>
 <span class="o">&gt;</span>     192.168.11.130:2377
 
@@ -477,11 +477,11 @@ dokh8j4z0iuslye0qa662axqv   <span class="se">\_</span> app jevic.io/nginx:alpine
 dumjwz4oqc5xobvjv9rosom0w   <span class="se">\_</span> app jevic.io/nginx:alpine  master    Running        Running 16 minutes ago
 
 每次获取的值都不同：
-<span class="o">[</span>root@master ~]# curl <span class="k">$(</span>hostname <span class="nt">--all-ip-addresses</span> | awk <span class="s1">'{print $1}'</span><span class="k">)</span>:8000
+<span class="o">[</span>root@master ~]# curl <span class="k">$(</span><span class="nb">hostname</span> <span class="nt">--all-ip-addresses</span> | <span class="nb">awk</span> <span class="s1">'{print $1}'</span><span class="k">)</span>:8000
 I<span class="s1">'m 8c2eeb5d420f
 [root@master ~]# curl $(hostname --all-ip-addresses | awk '</span><span class="o">{</span>print <span class="nv">$1</span><span class="o">}</span><span class="s1">'):8000
 I'</span>m 0b56c2a5b2a4
-<span class="o">[</span>root@master ~]# curl <span class="k">$(</span>hostname <span class="nt">--all-ip-addresses</span> | awk <span class="s1">'{print $1}'</span><span class="k">)</span>:8000
+<span class="o">[</span>root@master ~]# curl <span class="k">$(</span><span class="nb">hostname</span> <span class="nt">--all-ip-addresses</span> | <span class="nb">awk</span> <span class="s1">'{print $1}'</span><span class="k">)</span>:8000
 I<span class="s1">'m 000982389fa0
 </span></code></pre></div></div>
 

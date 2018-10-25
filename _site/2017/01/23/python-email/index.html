@@ -139,18 +139,18 @@ Python对SMTP支持有smtplib和email两个模块，email负责构造邮件，sm
   <li>yum install sendmail -y</li>
 </ul>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">root</span><span class="nd">@master</span> <span class="n">python</span><span class="p">]</span><span class="c"># cat localmail.py </span>
-<span class="c">#!/usr/bin/python</span>
-<span class="c"># -*- coding: UTF-8 -*-</span>
-<span class="kn">import</span> <span class="nn">smtplib</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">root</span><span class="o">@</span><span class="n">master</span> <span class="n">python</span><span class="p">]</span><span class="c1"># cat localmail.py 
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+</span><span class="kn">import</span> <span class="nn">smtplib</span>
 <span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
 <span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
 
 <span class="n">sender</span> <span class="o">=</span> <span class="s">'from@jevic.com'</span>
-<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s">'test@test.com'</span><span class="p">]</span>  <span class="c"># 接收邮件，可设置为你的QQ邮箱或者其他邮箱</span>
-
-<span class="c"># 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码</span>
-<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s">'Python 邮件发送测试...'</span><span class="p">,</span> <span class="s">'plain'</span><span class="p">,</span> <span class="s">'utf-8'</span><span class="p">)</span>
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s">'test@test.com'</span><span class="p">]</span>  <span class="c1"># 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+</span>
+<span class="c1"># 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码
+</span><span class="n">message</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s">'Python 邮件发送测试...'</span><span class="p">,</span> <span class="s">'plain'</span><span class="p">,</span> <span class="s">'utf-8'</span><span class="p">)</span>
 <span class="n">message</span><span class="p">[</span><span class="s">'From'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s">"测试邮件"</span><span class="p">,</span> <span class="s">'utf-8'</span><span class="p">)</span>
 <span class="n">message</span><span class="p">[</span><span class="s">'To'</span><span class="p">]</span> <span class="o">=</span>  <span class="n">Header</span><span class="p">(</span><span class="s">"测试"</span><span class="p">,</span> <span class="s">'utf-8'</span><span class="p">)</span>
 
@@ -205,13 +205,13 @@ server.quit<span class="o">()</span>
 </code></pre></div></div>
 
 <h2 id="163邮箱2">163邮箱[2]</h2>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env python</span>
-<span class="c"># coding=utf-8</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env python
+# coding=utf-8
+</span>
 <span class="kn">import</span> <span class="nn">smtplib</span>
 <span class="kn">from</span> <span class="nn">email.MIMEText</span> <span class="kn">import</span> <span class="n">MIMEText</span>
-<span class="c">#from email.Utils import formatdate</span>
-<span class="kn">from</span> <span class="nn">email.Header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="c1">#from email.Utils import formatdate
+</span><span class="kn">from</span> <span class="nn">email.Header</span> <span class="kn">import</span> <span class="n">Header</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
@@ -231,8 +231,8 @@ server.quit<span class="o">()</span>
     <span class="n">mail</span><span class="p">[</span><span class="s">'From'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fromMail</span>
     <span class="n">mail</span><span class="p">[</span><span class="s">'To'</span><span class="p">]</span> <span class="o">=</span><span class="s">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toMail</span><span class="p">)</span> 
     <span class="k">print</span> <span class="n">mail</span><span class="p">[</span><span class="s">'To'</span><span class="p">]</span>
-<span class="c">#   mail['Date'] = formatdate()</span>
-    
+<span class="c1">#   mail['Date'] = formatdate()
+</span>    
     <span class="k">try</span><span class="p">::</span>
         <span class="n">smtp</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtpHost</span><span class="p">,</span> <span class="n">smtpPort</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
         <span class="n">smtp</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>

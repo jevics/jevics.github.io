@@ -161,9 +161,9 @@
 本文解压至 <code class="highlighter-rouge">/opt/source/</code> 目录下，本次伪分布式模拟 <code class="highlighter-rouge">3</code> 个 Zookeeper，目录分配如下：</p>
 </blockquote>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hadoop@master <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span>mkdir /opt/source
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hadoop@master <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span><span class="nb">mkdir</span> /opt/source
 <span class="o">[</span>hadoop@master <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span><span class="nb">tar </span>zxf /home/zookeeper-3.4.9.tar.gz <span class="nt">-C</span> /opt/source
-<span class="o">[</span>hadoop@master <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span>cp <span class="nt">-a</span> zookeeper zookeeper2 <span class="o">&amp;&amp;</span> cp <span class="nt">-a</span> zookeeper zookeeper3
+<span class="o">[</span>hadoop@master <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span><span class="nb">cp</span> <span class="nt">-a</span> zookeeper zookeeper2 <span class="o">&amp;&amp;</span> <span class="nb">cp</span> <span class="nt">-a</span> zookeeper zookeeper3
 <span class="o">[</span>hadoop@master <span class="nb">source</span><span class="o">]</span><span class="nv">$ </span>tree <span class="nt">-d</span> <span class="nt">-L</span> 1
 <span class="nb">.</span>
 ├── zookeeper
@@ -270,7 +270,7 @@ Welcome to ZooKeeper!
 JLine support is enabled
 2016-12-26 15:20:48,698 <span class="o">[</span>myid:] - INFO  <span class="o">[</span>main-SendThread<span class="o">(</span>master:2181<span class="o">)</span>:ClientCnxn<span class="nv">$SendThread</span>@876] - Socket conn
 ection established to master/192.168.11.130:2181, initiating session2016-12-26 15:20:48,725 <span class="o">[</span>myid:] - INFO  <span class="o">[</span>main-SendThread<span class="o">(</span>master:2181<span class="o">)</span>:ClientCnxn<span class="nv">$SendThread</span>@1299] - Session es
-tablishment <span class="nb">complete </span>on server master/192.168.11.130:2181, sessionid <span class="o">=</span> 0x15939ddfedb0001, negotiated timeout <span class="o">=</span> 30000
+tablishment <span class="nb">complete </span>on server master/192.168.11.130:2181, sessionid <span class="o">=</span> 0x15939ddfedb0001, negotiated <span class="nb">timeout</span> <span class="o">=</span> 30000
 WATCHER::
 WatchedEvent state:SyncConnected <span class="nb">type</span>:None path:null
 <span class="o">[</span>zk: master:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 1] create /test 123
@@ -281,7 +281,7 @@ Welcome to ZooKeeper!
 JLine support is enabled
 2016-12-26 15:21:40,669 <span class="o">[</span>myid:] - INFO  <span class="o">[</span>main-SendThread<span class="o">(</span>master:2183<span class="o">)</span>:ClientCnxn<span class="nv">$SendThread</span>@876] - Socket conn
 ection established to master/192.168.11.130:2183, initiating session2016-12-26 15:21:40,691 <span class="o">[</span>myid:] - INFO  <span class="o">[</span>main-SendThread<span class="o">(</span>master:2183<span class="o">)</span>:ClientCnxn<span class="nv">$SendThread</span>@1299] - Session es
-tablishment <span class="nb">complete </span>on server master/192.168.11.130:2183, sessionid <span class="o">=</span> 0x35939de0e410001, negotiated timeout <span class="o">=</span> 30000
+tablishment <span class="nb">complete </span>on server master/192.168.11.130:2183, sessionid <span class="o">=</span> 0x35939de0e410001, negotiated <span class="nb">timeout</span> <span class="o">=</span> 30000
 WATCHER::
 WatchedEvent state:SyncConnected <span class="nb">type</span>:None path:null
 <span class="o">[</span>zk: master:2183<span class="o">(</span>CONNECTED<span class="o">)</span> 1] get /test

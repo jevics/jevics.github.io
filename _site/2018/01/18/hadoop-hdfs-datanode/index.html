@@ -188,7 +188,7 @@ DFS Used%: 0.01%
 Under replicated blocks: 0
 Blocks with corrupt replicas: 0
 Missing blocks: 0
-Missing blocks <span class="o">(</span>with replication factor 1<span class="o">)</span>: 0
+Missing blocks <span class="o">(</span>with replication <span class="nb">factor </span>1<span class="o">)</span>: 0
 
 <span class="nt">-------------------------------------------------</span>
 Live datanodes <span class="o">(</span>3<span class="o">)</span>:
@@ -267,7 +267,7 @@ Time Stamp               Iteration#  Bytes Already Moved  Bytes Left To Move  By
   <p>hdfs-site.xml 必须配置此部分</p>
 </blockquote>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hadoop@hdfs-master hadoop]<span class="nv">$ </span>tail <span class="nt">-n</span> 5 hdfs-site.xml
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hadoop@hdfs-master hadoop]<span class="nv">$ </span><span class="nb">tail</span> <span class="nt">-n</span> 5 hdfs-site.xml
 　　&lt;property&gt;
 　　    &lt;<span class="o">!</span><span class="nt">--dfs</span>.hosts.exclude定义的文件内容为,每个需要下线的机器，一行一个--&gt;
         &lt;name&gt;dfs.hosts.exclude&lt;/name&gt;

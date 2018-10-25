@@ -180,7 +180,7 @@
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@Test-27 ~]# <span class="nb">cat </span>run.sh
 <span class="c">## 根据主机名修改id</span>
-<span class="nv">id</span><span class="o">=</span>1  
+<span class="nb">id</span><span class="o">=</span>1  
 <span class="c">## 修改本地监听地址</span>
 <span class="nv">LIP</span><span class="o">=</span>192.168.3.27
 <span class="c">##</span>
@@ -229,7 +229,7 @@ etcd <span class="nt">--name</span> etcd<span class="k">${</span><span class="nv
   <li>-e ROOT  配置根目录,默认为 /config 需要在etcd手动创建</li>
 </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master ~]# etcdctl mkdir /config
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master ~]# etcdctl <span class="nb">mkdir</span> /config
 <span class="o">[</span>root@master ~]# docker run <span class="nt">-d</span> <span class="nt">--name</span> dcmp <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
 <span class="nt">-e</span> <span class="nv">ETCD_HOST</span><span class="o">=</span>192.168.3.27 <span class="se">\</span>
 jevic/etcd:dcmp

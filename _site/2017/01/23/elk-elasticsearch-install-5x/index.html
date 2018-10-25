@@ -272,7 +272,7 @@ es hard memlock unlimited
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>此处将通过es-0 节点直接切换到其他节点进行操作免去输入密码
 <span class="o">[</span>root@es-0 ~]# ssh-keygen <span class="nt">-t</span> rsa <span class="o">[</span>一路回车]
 <span class="o">[</span>root@es-0 ~]# <span class="nb">cd</span> .ssh <span class="o">&amp;&amp;</span> <span class="nb">cat </span>id_rsa.pub <span class="o">&gt;</span> authorized_keys 
-<span class="o">[</span>root@es-0 ~]# chmod 0600 .ssh/authorized_keys
+<span class="o">[</span>root@es-0 ~]# <span class="nb">chmod </span>0600 .ssh/authorized_keys
 <span class="o">[</span>root@es-0 ~]# ssh-copy-id <span class="nt">-i</span> .ssh/id_rsa.pub root@es-1
 <span class="o">[</span>root@es-0 ~]# ssh-copy-id <span class="nt">-i</span> .ssh/id_rsa.pub root@es-2
 <span class="o">[</span>root@es-0 ~]# ssh-copy-id <span class="nt">-i</span> .ssh/id_rsa.pub root@es-3
@@ -305,11 +305,11 @@ es hard memlock unlimited
 <h3 id="4-同步host文件">4. 同步host文件</h3>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# updatefiletocluster.sh /etc/hosts
-file dir is /etc
+file <span class="nb">dir </span>is /etc
 
 
 <span class="o">==================</span>starting rsync file /etc/hosts to es-1<span class="o">=====================</span>
-remote dir is existed!
+remote <span class="nb">dir </span>is existed!
 sending incremental file list
 host
 
@@ -318,7 +318,7 @@ total size is 4  speedup is 0.04
 
 
 <span class="o">==================</span>starting rsync file /etc/hosts to es-2<span class="o">=====================</span>
-remote dir is existed!
+remote <span class="nb">dir </span>is existed!
 sending incremental file list
 host
 
@@ -327,7 +327,7 @@ total size is 4  speedup is 0.04
 
 
 <span class="o">==================</span>starting rsync file /etc/hosts to es-3<span class="o">=====================</span>
-remote dir is existed!
+remote <span class="nb">dir </span>is existed!
 sending incremental file list
 host
 
@@ -341,7 +341,7 @@ total size is 4  speedup is 0.04
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# <span class="nb">ls</span> /opt/
 jdk1.8.0_74
-<span class="o">[</span>root@es-0 ~]# ln <span class="nt">-s</span> /opt/jdk1.8.0_74 /opt/jdk
+<span class="o">[</span>root@es-0 ~]# <span class="nb">ln</span> <span class="nt">-s</span> /opt/jdk1.8.0_74 /opt/jdk
 添加变量：
 <span class="o">[</span>root@es-0 ~]# vim /etc/profile  
 <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/opt/jdk
@@ -394,7 +394,7 @@ file locks                      <span class="o">(</span><span class="nt">-x</spa
 
 <h3 id="7-开启-bootstrapmemory_lock-true">7. 开启 bootstrap.memory_lock: true</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# tail <span class="nt">-n</span> 2 /etc/security/limits.conf    <span class="o">(</span>踩坑记录<span class="o">)</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# <span class="nb">tail</span> <span class="nt">-n</span> 2 /etc/security/limits.conf    <span class="o">(</span>踩坑记录<span class="o">)</span>
 es soft memlock unlimited   
 es hard memlock unlimited
 
@@ -421,7 +421,7 @@ es hard memlock unlimited
 </ul>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# useradd es
-<span class="o">[</span>root@es-0 ~]# chown <span class="nt">-R</span> es:es /opt/source/
+<span class="o">[</span>root@es-0 ~]# <span class="nb">chown</span> <span class="nt">-R</span> es:es /opt/source/
 </code></pre></div></div>
 
 <h3 id="elasticsearch-使用es用户操作">elasticsearch 使用es用户操作！！！</h3>
@@ -468,7 +468,7 @@ xpack.security.enabled: <span class="nb">false</span> <span class="c">#关闭es�
   <li>安装在所有节点</li>
 </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>es@es-0 ~]<span class="nv">$ </span><span class="nb">cd</span> /opt/es/ <span class="o">&amp;&amp;</span> ./bin/elasticsearch-plugin install file:///opt/source/x-pack-5.1.1.zip
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>es@es-0 ~]<span class="nv">$ </span><span class="nb">cd</span> /opt/es/ <span class="o">&amp;&amp;</span> ./bin/elasticsearch-plugin <span class="nb">install </span>file:///opt/source/x-pack-5.1.1.zip
 </code></pre></div></div>
 
 <h3 id="4-启动-elasticsearch并验证">4. 启动 elasticsearch并验证</h3>
@@ -513,7 +513,7 @@ filter <span class="o">{</span>
     grok <span class="o">{</span>
         match <span class="o">=&gt;</span> <span class="o">{</span> <span class="s2">"message"</span> <span class="o">=&gt;</span> <span class="s2">"%{COMBINEDAPACHELOG} %{QS:x_forwarded_for}"</span><span class="o">}</span>
     <span class="o">}</span>
-    date <span class="o">{</span>
+    <span class="nb">date</span> <span class="o">{</span>
         match <span class="o">=&gt;</span> <span class="o">[</span> <span class="s2">"timestamp"</span>, <span class="s2">"UNIX"</span> <span class="o">]</span>
     <span class="o">}</span>
     geoip <span class="o">{</span>
@@ -547,7 +547,7 @@ output <span class="o">{</span>
 </code></pre></div></div>
 
 <h3 id="启动">启动</h3>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-3 ~]# <span class="nb">cd</span> /opt/logstash <span class="o">&amp;&amp;</span> nohup ./bin/logstash <span class="nt">-f</span> config/nginx <span class="nt">-l</span> logs/nginx.log &amp;
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-3 ~]# <span class="nb">cd</span> /opt/logstash <span class="o">&amp;&amp;</span> <span class="nb">nohup</span> ./bin/logstash <span class="nt">-f</span> config/nginx <span class="nt">-l</span> logs/nginx.log &amp;
 </code></pre></div></div>
 
 <h2 id="kibana-1">kibana</h2>
@@ -564,12 +564,12 @@ xpack.security.enabled: <span class="nb">false</span>
 
 <h3 id="2-安装-x-pack">2. 安装 x-pack</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# <span class="nb">cd</span> /opt/kibana <span class="o">&amp;&amp;</span> ./bin/kibana-plugin install file:///opt/source/x-pack-5.1.1.zip
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# <span class="nb">cd</span> /opt/kibana <span class="o">&amp;&amp;</span> ./bin/kibana-plugin <span class="nb">install </span>file:///opt/source/x-pack-5.1.1.zip
 </code></pre></div></div>
 
 <h3 id="3-启动kibana">3. 启动kibana</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# <span class="nb">cd</span> /opt/kibana <span class="o">&amp;&amp;</span> nohup ./bin/kibana &amp;
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@es-0 ~]# <span class="nb">cd</span> /opt/kibana <span class="o">&amp;&amp;</span> <span class="nb">nohup</span> ./bin/kibana &amp;
 </code></pre></div></div>
 
 <h3 id="4-页面访问">4. 页面访问</h3>

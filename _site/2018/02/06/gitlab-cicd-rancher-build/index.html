@@ -213,8 +213,8 @@ Specific runners只能被指定的项目使用，Shared runners则可以运行�
 FROM gitlab/gitlab-runner:v9.2.2
 RUN curl <span class="nt">-O</span> https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz  <span class="se">\</span>
     <span class="o">&amp;&amp;</span> <span class="nb">tar </span>zxvf docker-latest.tgz <span class="se">\</span>
-    <span class="o">&amp;&amp;</span> cp docker/docker /usr/local/bin/ <span class="se">\</span>
-    <span class="o">&amp;&amp;</span> rm <span class="nt">-rf</span> docker docker-latest.tgz  
+    <span class="o">&amp;&amp;</span> <span class="nb">cp </span>docker/docker /usr/local/bin/ <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> docker docker-latest.tgz  
 <span class="c"># docker build -t gitlab-runner:docker .</span>
 </code></pre></div></div>
 
@@ -359,7 +359,7 @@ stages:
 <span class="c"># 环境</span>
 before_script:
   - <span class="nb">sudo </span>docker <span class="nt">--version</span>
-  - <span class="nb">sudo </span>uname <span class="nt">-a</span>
+  - <span class="nb">sudo uname</span> <span class="nt">-a</span>
 <span class="c"># 构建镜像</span>
 build:
   stage: build

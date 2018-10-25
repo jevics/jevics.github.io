@@ -157,8 +157,8 @@
 
 <h3 id="1安装nodejs">1.安装nodejs</h3>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum安装：
-<span class="o">[</span>root@node1 ~]# yum install <span class="nt">-y</span> epel-release
-<span class="o">[</span>root@node1 ~]# yum install <span class="nt">-y</span> npm
+<span class="o">[</span>root@node1 ~]# yum <span class="nb">install</span> <span class="nt">-y</span> epel-release
+<span class="o">[</span>root@node1 ~]# yum <span class="nb">install</span> <span class="nt">-y</span> npm
 <span class="o">[</span>root@node1 ~]# npm <span class="nt">-version</span>
 3.10.8
 <span class="o">[</span>root@node1 ~]# node <span class="nt">-v</span>
@@ -169,7 +169,7 @@ v6.9.1
 官网下载地址：https://nodejs.org/en/download/
 
 <span class="o">[</span>root@node1 ~]# <span class="nb">tar </span>xf node-v6.9.5-linux-x64.tar.xz
-<span class="o">[</span>root@node1 ~]# mv node-v6.9.5-linux-x64 /usr/local/nodejs
+<span class="o">[</span>root@node1 ~]# <span class="nb">mv </span>node-v6.9.5-linux-x64 /usr/local/nodejs
 <span class="o">[</span>root@node1 ~]# vim /etc/profile
 <span class="nb">export </span><span class="nv">NODE_HOME</span><span class="o">=</span>/usr/local/nodejs
 <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$NODE_HOME</span>/bin:<span class="nv">$PATH</span>
@@ -182,17 +182,17 @@ v6.9.5
 </code></pre></div></div>
 
 <h2 id="2-安装hubot">2. 安装hubot</h2>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# npm install <span class="nt">-g</span> hubot coffee-script yo generator-hubot
-<span class="o">[</span>root@node1 ~]# mkdir myhubot <span class="o">&amp;&amp;</span> <span class="nb">cd </span>myhubot
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# npm <span class="nb">install</span> <span class="nt">-g</span> hubot coffee-script yo generator-hubot
+<span class="o">[</span>root@node1 ~]# <span class="nb">mkdir </span>myhubot <span class="o">&amp;&amp;</span> <span class="nb">cd </span>myhubot
 <span class="o">[</span>root@node1 myhubot]# yo hubot  <span class="o">(</span>提示没有权限<span class="o">)</span>
 /usr/local/nodejs/lib/node_modules/yo/node_modules/mkdirp/index.js:90
                     throw err0<span class="p">;</span>
                     ^
 
-Error: EACCES: permission denied, mkdir <span class="s1">'/root/.config'</span>
+Error: EACCES: permission denied, <span class="nb">mkdir</span> <span class="s1">'/root/.config'</span>
     at Error <span class="o">(</span>native<span class="o">)</span>
     at Object.fs.mkdirSync <span class="o">(</span>fs.js:922:18<span class="o">)</span>
-    at sync <span class="o">(</span>/usr/local/nodejs/lib/node_modules/yo/node_modules/mkdirp/index.js:71:13<span class="o">)</span>
+    at <span class="nb">sync</span> <span class="o">(</span>/usr/local/nodejs/lib/node_modules/yo/node_modules/mkdirp/index.js:71:13<span class="o">)</span>
     at Function.sync <span class="o">(</span>/usr/local/nodejs/lib/node_modules/yo/node_modules/mkdirp/index.js:77:24<span class="o">)</span>
     at Object.get <span class="o">(</span>/usr/local/nodejs/lib/node_modules/yo/node_modules/configstore/index.js:38:13<span class="o">)</span>
     at Object.Configstore <span class="o">(</span>/usr/local/nodejs/lib/node_modules/yo/node_modules/configstore/index.js:27:44<span class="o">)</span>
@@ -201,7 +201,7 @@ Error: EACCES: permission denied, mkdir <span class="s1">'/root/.config'</span>
     at Module._compile <span class="o">(</span>module.js:570:32<span class="o">)</span>
     at Object.Module._extensions..js <span class="o">(</span>module.js:579:10<span class="o">)</span>
 
-<span class="o">[</span>root@node1 myhubot]# chmod g+w /root   <span class="o">(</span>修改root目录权限<span class="o">)</span>
+<span class="o">[</span>root@node1 myhubot]# <span class="nb">chmod </span>g+w /root   <span class="o">(</span>修改root目录权限<span class="o">)</span>
 <span class="o">[</span>root@node1 myhubot]# yo hubot
 ? <span class="o">==========================================================================</span>
 We<span class="s1">'re constantly looking for ways to make yo better! 
@@ -265,8 +265,8 @@ myhubot@0.0.0 /root/myhubot
 ......
 </span></code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 myhubot]# chmod g-w /root　（将root目录权限恢复原状）
-<span class="o">[</span>root@node1 myhubot]# npm install hubot-bearychat <span class="nt">--save</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 myhubot]# <span class="nb">chmod </span>g-w /root　（将root目录权限恢复原状）
+<span class="o">[</span>root@node1 myhubot]# npm <span class="nb">install </span>hubot-bearychat <span class="nt">--save</span>
 myhubot@0.0.0 /root/myhubot
 └─┬ hubot-bearychat@0.3.1 
   ├─┬ bearychat@0.1.0 
@@ -284,10 +284,10 @@ myhubot@0.0.0 /root/myhubot
 </code></pre></div></div>
 
 <h3 id="安装shell-命令脚本支持模块">安装shell 命令脚本支持模块：</h3>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 myhubot]# npm install hubot-script-shellcmd
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 myhubot]# npm <span class="nb">install </span>hubot-script-shellcmd
 myhubot@0.0.0 /root/myhubot
 └── hubot-script-shellcmd@0.0.16
-<span class="o">[</span>root@node1 myhubot]# cp <span class="nt">-R</span> node_modules/hubot-script-shellcmd/bash ./
+<span class="o">[</span>root@node1 myhubot]# <span class="nb">cp</span> <span class="nt">-R</span> node_modules/hubot-script-shellcmd/bash ./
 
 修改一下external-scripts.json，添加模块：hubot-script-shellcmd
 <span class="o">[</span>root@node1 myhubot]# <span class="nb">cat </span>external-scripts.json 
@@ -311,8 +311,8 @@ myhubot@0.0.0 /root/myhubot
 新增脚本
 <span class="o">[</span>root@node1 handlers]# <span class="nb">cat </span>disk 
 <span class="c">#!/bin/bash</span>
-df <span class="nt">-h</span>
-<span class="o">[</span>root@node1 handlers]# chmod +x disk 
+<span class="nb">df</span> <span class="nt">-h</span>
+<span class="o">[</span>root@node1 handlers]# <span class="nb">chmod</span> +x disk 
 
 </code></pre></div></div>
 
@@ -338,7 +338,7 @@ df <span class="nt">-h</span>
 <span class="o">[</span>root@node1 myhubot]# <span class="nb">export </span><span class="nv">HUBOT_BEARYCHAT_MODE</span><span class="o">=</span>rtm
 <span class="o">[</span>root@node1 myhubot]# <span class="nb">export </span><span class="nv">HUBOT_SHELLCMD_KEYWORD</span><span class="o">=</span>run //命令别名
 <span class="o">[</span>root@node1 myhubot]# <span class="nb">export </span><span class="nv">EXPRESS_PORT</span><span class="o">=</span>9090
-<span class="o">[</span>root@node1 myhubot]# nohup ./bin/hubot <span class="nt">-a</span> bearychat 2&amp;1&gt; hubot.log
+<span class="o">[</span>root@node1 myhubot]# <span class="nb">nohup</span> ./bin/hubot <span class="nt">-a</span> bearychat 2&amp;1&gt; hubot.log
 <span class="o">[</span>root@node1 myhubot]# netstat <span class="nt">-tnlp</span>|grep 9090
 tcp        0      0 0.0.0.0:9090            0.0.0.0:<span class="k">*</span>               LISTEN      54886/node 
 
@@ -378,7 +378,7 @@ module.exports <span class="o">=</span> <span class="o">(</span>robot<span class
   <li>重启hubot</li>
 </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# nohup ./bin/hubot <span class="nt">-a</span> bearychat 2&amp;1&gt;&gt; hubot.log &amp;
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# <span class="nb">nohup</span> ./bin/hubot <span class="nt">-a</span> bearychat 2&amp;1&gt;&gt; hubot.log &amp;
 </code></pre></div></div>
 
 <h3 id="测试">测试</h3>

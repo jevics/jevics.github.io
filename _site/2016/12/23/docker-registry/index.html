@@ -156,12 +156,12 @@
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 192.168.11.10 hub.test.io
-<span class="o">[</span>root@hub ~]# hostname    
-hub.test.io
+<span class="o">[</span>root@hub ~]# <span class="nb">hostname    
+</span>hub.test.io
 说明：如果私有仓库用的不是域名而是IP，请加上此设置：
 - <span class="c"># sed -i '/^\[ v3_ca \]$/a subjectAltName = IP:192.168.10.10' /etc/ssl/openssl.cnf</span>
 <span class="o">[</span>root@hub <span class="o">]</span><span class="c"># mkdir /opt/registry &amp;&amp; cd /opt/registry</span>
-<span class="o">[</span>root@hub registry]# mkdir auth certs
+<span class="o">[</span>root@hub registry]# <span class="nb">mkdir </span>auth certs
 <span class="o">[</span>root@hub registry]# docker run <span class="nt">--entrypoint</span> htpasswd registry:latest <span class="nt">-Bbn</span> username password <span class="o">&gt;</span> auth/htpasswd  //自行更换用户名密码
 <span class="o">[</span>root@hub registry]# <span class="nb">cat </span>auth/htpasswd   // 下面一行为空，切记不要修改生成后的文件
 admin:<span class="nv">$2y$05$LSRMXpIbnvnj8ErzbRvKq</span>.F04Qf3oajP7dFWQIjJBrFAoDXKM1I16
@@ -184,9 +184,9 @@ State or Province Name <span class="o">(</span>full name<span class="o">)</span>
 Locality Name <span class="o">(</span>eg, city<span class="o">)</span> <span class="o">[</span>Default City]:
 Organization Name <span class="o">(</span>eg, company<span class="o">)</span> <span class="o">[</span>Default Company Ltd]:
 Organizational Unit Name <span class="o">(</span>eg, section<span class="o">)</span> <span class="o">[]</span>:
-Common Name <span class="o">(</span>eg, your name or your servers hostname<span class="o">)</span> <span class="o">[]</span>:hub.test.io
+Common Name <span class="o">(</span>eg, your name or your servers <span class="nb">hostname</span><span class="o">)</span> <span class="o">[]</span>:hub.test.io
 Email Address <span class="o">[]</span>:
-<span class="o">[</span>root@hub registry]# mkdir <span class="nt">-p</span> /etc/docker/certs.d/hub.test.io <span class="o">&amp;&amp;</span> cp certs/ca.crt /etc/docker/certs.d/hub.test.io
+<span class="o">[</span>root@hub registry]# <span class="nb">mkdir</span> <span class="nt">-p</span> /etc/docker/certs.d/hub.test.io <span class="o">&amp;&amp;</span> <span class="nb">cp </span>certs/ca.crt /etc/docker/certs.d/hub.test.io
 <span class="o">[</span>root@hub registry]# <span class="nb">ls</span> /etc/docker/certs.d/hub.test.io/
 ca.crt
 <span class="o">[</span>root@hub registry]# systemctl daemon-reload <span class="o">&amp;&amp;</span> systemctl restart docker
