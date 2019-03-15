@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//piwik.mritd.me/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//piwik.mritd.me/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Mysql 操作杂录 &mdash; Jevic</title>
+    <link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css">
+    <link rel="stylesheet" href="/assets/vendor/primer-markdown/dist/user-content.min.css">
+    <link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css">
+    <link rel="stylesheet" href="/assets/css/components/collection.css">
+    <link rel="stylesheet" href="/assets/css/components/repo-card.css">
+    <link rel="stylesheet" href="/assets/css/sections/repo-list.css">
+    <link rel="stylesheet" href="/assets/css/sections/mini-repo-list.css">
+    <link rel="stylesheet" href="/assets/css/components/boxed-group.css">
+    <link rel="stylesheet" href="/assets/css/globals/common.css">
+    <link rel="stylesheet" href="/assets/vendor/share.js/dist/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/globals/responsive.css">
+    <link rel="stylesheet" href="/assets/css/posts/index.css">
+    <!-- Latest compiled and minified CSS -->
+    
+
+    
+    <link rel="canonical" href="http://0.0.0.0:80/2017/01/12/mysql-basic-conf/">
+    <link rel="alternate" type="application/atom+xml" title="Jevic" href="/feed.xml">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <meta property="og:title" content="Mysql 操作杂录">
+      
+    <meta name="keywords" content="mysql">
+    <meta name="og:keywords" content="mysql">
+      
+    <meta name="description" content="  MySQL 常用操作语句">
+    <meta name="og:description" content="  MySQL 常用操作语句">
+      
+    
+    
+        
+    
+    <meta property="og:url" content="http://0.0.0.0:80/2017/01/12/mysql-basic-conf/">
+    <meta property="og:site_name" content="Jevic">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="zh_CN" />
+    
+    <meta property="article:published_time" content="2017-01-12">
+    
+    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/js/jquery-ui.js"></script>
+    <script type="text/javascript">
+    function toggleMenu() {
+        var nav = document.getElementsByClassName("site-header-nav")[0];
+        if (nav.style.display == "inline-flex") {
+          nav.style.display = "none";
+        } else {
+          nav.style.display = "inline-flex";
+        }
+    }
+    </script>
+</head>
+<body class="" data-mz="">
+    <header class="site-header">
+        <div class="container">
+            <h1><a href="/" title="Jevic"><span class="octicon octicon-mark-github"></span> Jevic</a></h1>
+            <button class="collapsed mobile-visible" type="button" onclick="toggleMenu();">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <nav class="site-header-nav" role="navigation">
+                
+                <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a>
+                
+                <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a>
+                
+                <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a>
+                
+                <a href="/open-source/" class=" site-header-nav-item" target="" title="开源">开源</a>
+                
+                <a href="/links/" class=" site-header-nav-item" target="" title="链接">链接</a>
+                
+                <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a>
+                
+            </nav>
+        </div>
+    </header>
+    <!-- / header -->
+
+    <section class="collection-head small geopattern" data-pattern-id="Mysql 操作杂录">
+<div class="container">
+  <div class="columns">
+    <div class="column three-fourths">
+      <div class="collection-title">
+        <h1 class="collection-header">Mysql 操作杂录</h1>
+        <div class="collection-info">
+          
+          <span class="meta-info">
+            <span class="octicon octicon-calendar"></span> 2017/01/12
+          </span>
+          
+          
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href="/categories/#Mysql" title="Mysql">Mysql</a>
+          </span>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<!-- / .banner -->
+<section class="container content">
+<div class="columns">
+  <div class="column three-fourths" >
+    <article class="article-content markdown-body">
+    <blockquote>
+  <p>MySQL 常用操作语句</p>
+</blockquote>
+
+<h2 id="密码修改">密码修改</h2>
+<ol>
+  <li>set password for root@localhost = password(‘password’);</li>
+  <li>mysqladmin -uroot -p123456 password 123</li>
+  <li>update user set password=password(‘123’) where user=’root’ and host=’localhost’;</li>
+  <li>flush privileges; (改密码后执行刷新权限)</li>
+</ol>
+
+<h3 id="忘记密码">忘记密码</h3>
+<ol>
+  <li>关闭正在运行的MySQL服务。</li>
+  <li>转到mysql\bin目录。</li>
+  <li>mysqld –skip-grant-tables 回车。–skip-grant-tables 的意思是启动MySQL服务的时候跳过权限表认证。</li>
+  <li>再开一个DOS窗口（因为刚才那个DOS窗口已经不能动了），转到mysql\bin目录。</li>
+  <li>输入mysql回车，如果成功，将出现MySQL提示符 &gt;。</li>
+  <li>连接权限数据库： use mysql;</li>
+  <li>刷新: flush privileges;</li>
+  <li>改密码：update user set password=password(“123”) where user=”root”;（别忘了最后加分号） 。</li>
+  <li>刷新权限（必须步骤）：flush privileges;　。</li>
+  <li>退出 quit。</li>
+  <li>注销系统，再进入，使用用户名root和刚才设置的新密码123登录</li>
+</ol>
+
+<h2 id="删除数据库">删除数据库：</h2>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drop database db_name; 
+</code></pre></div></div>
+
+<h2 id="创建表">创建表：</h2>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	create table tb_name(col1,col2,....);
+	mysql&gt; create table names(Name CHAR(20) NOT NULL,Age tinyint unsigned,Gender CHAR(1) NOT NULL);
+</code></pre></div></div>
+
+<ul>
+  <li>查看数据库中的表：show tables from db_name;</li>
+  <li>查看表的结构：desc tb_name;</li>
+  <li>删除表： drop table tb_name;</li>
+</ul>
+
+<h2 id="从库只读设置直接生效无需重启">从库只读设置(直接生效无需重启)</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; set global read_only=1;   开启
+mysql&gt; set global read_only=0;   关闭
+mysql&gt; show variables like '%read_only%';
++------------------+-------+
+| Variable_name    | Value |
++------------------+-------+
+| innodb_read_only | OFF   |
+| read_only        | ON    |
+| super_read_only  | OFF   |
+| tx_read_only     | OFF   |
++------------------+-------+
+4 rows in set (0.00 sec)
+
+注意: 拥有super all权限的用户仍然可以写操作；
+
+</code></pre></div></div>
+
+<h2 id="锁定数据库">锁定数据库</h2>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.FLUSH TABLES WITH READ LOCK
+全局读锁定，所有库所有表都被锁定只读。一般都是用在数据库联机备份
+这个时候数据库的写操作将被阻塞，读操作顺利进行。
+解锁的语句也是unlock tables。
+
+2.LOCK TABLES tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}
+表级别的锁定，可以锁定某一个表。
+例如： locktables test read; 不影响其他表的写操作。
+解锁语句也是unlock tables
+
+这两个语句在执行的时候都需要注意个特点，就是隐式提交的语句。
+在退出MySQL终端的时候都会隐式的执行unlock tables。
+也就是如果要让表锁定生效就必须一直保持对话
+
+P.S.  MYSQL的read lock和wirte lock
+read-lock:  允许其他并发的读请求，但阻塞写请求，即可以同时读，但不允许任何写。也叫共享锁
+write-lock: 不允许其他并发的读和写请求，是排他的(exclusive)。也叫独占锁
+
+</code></pre></div></div>
+
+<h2 id="lock-删除以及慢查询">lock 删除以及慢查询</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select concat('KILL ',id,';') from information_schema.processlist where TIME&gt;100 and INFO like 'SELECT%';
+
+select * from information_schema.`PROCESSLIST` where DB='ops_y' and state != 'Waiting for table level lock' order by TIME desc
+
+select * from information_schema.`PROCESSLIST` where DB='ops_y'  order by TIME desc
+
+这2条语句就能看到了，根本没有特别长时间的ddl和dml，就是有大量的lock处理不过来
+
+https://yq.aliyun.com/articles/11033
+
+
+show engines;
+show processlist;
+
+</code></pre></div></div>
+
+<h2 id="创建数据库">创建数据库</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; CREATE DATABASE IF NOT EXISTS cattle COLLATE = 'utf8_general_ci' CHARACTER SET = 'utf8';
+Query OK, 1 row affected, 1 warning (0.01 sec)
+
+mysql&gt; GRANT ALL ON cattle.* TO 'cattle'@'%' IDENTIFIED BY 'cattle0c73aa94933274a86ee51d5f052b59a3';
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql&gt; GRANT ALL ON cattle.* TO 'cattle'@'localhost' IDENTIFIED BY 'cattle0c73aa94933274a86ee51d5f052b59a3';
+Query OK, 0 rows affected, 2 warnings (0.00 sec)
+
+mysql&gt; show grants for cattle;
++-------------------------------------------------------------+
+| Grants for cattle@%                                   |
++-------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'cattle'@'%'                    |
+| GRANT ALL PRIVILEGES ON `cattle`.* TO 'cattle'@'%' |
++-------------------------------------------------------------+
+
+</code></pre></div></div>
+
+<h2 id="mysqldump">mysqldump</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>命令行下具体用法如下： 
+
+mysqldump -u用戶名 -p密码 -d 数据库名 表名 &gt; 脚本名;
+
+导出整个数据库结构和数据
+mysqldump -h localhost -uroot -p123456 database &gt; dump.sql
+
+导出单个数据表结构和数据
+mysqldump -h localhost -uroot -p123456  database table &gt; dump.sql
+
+导出整个数据库结构（不包含数据）
+mysqldump -h localhost -uroot -p123456  -d database &gt; dump.sql
+
+导出单个数据表结构（不包含数据）
+mysqldump -h localhost -uroot -p123456  -d database table &gt; dump.sq
+
+
+</code></pre></div></div>
+
+<h2 id="清空删除表数据">清空删除表数据</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>truncate table table_name;
+delete from table_name where ;
+</code></pre></div></div>
+<ul>
+  <li>truncate是整体删除（速度较快)</li>
+  <li>delete是逐条删除（速度较慢）</li>
+  <li>truncate不写服务器log，delete写服务器log，也就是truncate效率比delete高的原因。</li>
+  <li>truncate不激活trigger(触发器)，但是会重置Identity（标识列、自增字段），相当于自增列会被置为初始值，又重新从1开始记录，而不是接着原来的ID数。</li>
+  <li>而delete删除以后，Identity依旧是接着被删除的最近的那一条记录ID加1后进行记录。
+如果只需删除表中的部分记录，只能使用DELETE语句配合where条件。</li>
+</ul>
+
+<h2 id="删除数据库中所有表">删除数据库中所有表</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')
+FROM information_schema.tables
+WHERE table_schema = 'mydb';
+
+</code></pre></div></div>
+
+<h2 id="容量大小查看">容量大小查看</h2>
+<h3 id="所有库容量">所有库容量</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select table_schema,sum(data_length)/1024/1024 as data_length,sum(index_length)/1024/1024 as index_length,sum(data_length+index_length)/1024/1024 as sum from information_schema.tables;
+</code></pre></div></div>
+
+<h3 id="各个库大小汇总">各个库大小汇总</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select table_schema, sum(data_length+index_length)/1024/1024 as total_mb,sum(data_length)/1024/1024 as data_mb, sum(index_length)/1024/1024 as index_mb,count(*) as tables, curdate() as today from information_schema.tables group by table_schema order by 2 desc;
+</code></pre></div></div>
+
+<h3 id="查看单个库">查看单个库</h3>
+<p>注意分隔符</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select concat(truncate(sum(data_length)/1024/1024,2),'mb') as data_size, \
+concat(truncate(sum(max_data_length)/1024/1024,2),'mb') as max_data_size, \
+concat(truncate(sum(data_free)/1024/1024,2),'mb') as data_free, \
+concat(truncate(sum(index_length)/1024/1024,2),'mb') as index_size\
+ from information_schema.tables where table_schema = 'test_crawl';
+
+</code></pre></div></div>
+
+<h3 id="单个表状态">单个表状态</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>show table status from test_data where name = 'test_table' \G
+</code></pre></div></div>
+
+<h3 id="单个库所有表状态">单个库所有表状态</h3>
+<p>注意分隔符</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select table_name, (data_length/1024/1024) as data_mb , (index_length/1024/1024) \
+as index_mb, ((data_length+index_length)/1024/1024) as all_mb, table_rows \
+from tables where table_schema = 'test_data';
+</code></pre></div></div>
+
+<ul>
+  <li>批量执行</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cat ~/.my.cnf 
+[client]
+user = root
+host = localhost
+password = test
+
+
+#!/bin/bash
+DB_USER="test"
+PASSWD="test"
+HOST="192.168.1.236"
+DATABASE="test"
+Tmplog=dbsize.log
+##
+#Tables=`mysql -u${DB_USER} -p${PASSWD} -e "show tables from $DATABASE;" |egrep -v "Table|mysql"`
+Tables=`mysql -e "show tables from $DATABASE;" |egrep -v "Table|mysql"`
+
+rm -rf $Tmplog
+
+for table in $Tables;do
+    ## 指定用户名密码
+    #code=`mysql -u${DB_USER} -p${PASSWD} -e "use information_schema;select concat(round(sum(data_length/1024/1024),2),'MB') as data_length_MB, concat(round(sum(index_length/1024/1024),2),'M
+B') as index_length_MB  from tables where table_schema='"$DATABASE"' and table_name = '"$table"';"|egrep -v "length"`
+    ## 配置了.my.cnf
+    code=`mysql -e "use information_schema;select concat(round(sum(data_length/1024/1024),2),'MB') as data_length_MB, concat(round(sum(index_length/1024/1024),2),'MB') as index_length_MB  fr
+om tables where table_schema='"$DATABASE"' and table_name = '"$table"';"|egrep -v "length"`
+
+    echo -e "$table \t $code" &gt;&gt; $Tmplog
+done
+
+cat $Tmplog
+
+</code></pre></div></div>
+
+    </article>
+    <div class="share">
+      <div class="share-component"></div>
+
+    </div>
+    <div class="comment">
+      
+    
+        
+        <!-- Disqus Protection, see https://github.com/mzlogin/mzlogin.github.io/issues/2 -->
+        
+            <div id="disqus_thread"></div>
+            <script>
+                var disqus_config = function () {
+                    this.page.url = 'http://0.0.0.0:80/2017/01/12/mysql-basic-conf/';
+                    this.page.identifier = '/2017/01/12/mysql-basic-conf/';
+                    this.page.title = 'Mysql 操作杂录';
+                };
+                (function() { // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
+                    s.type = 'text/javascript';
+                    s.async = true;
+                    var shortname = 'jevic-cn';
+                    s.src = '//' + shortname + '.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        
+    
+
+
+    </div>
+  </div>
+  <div class="column one-fourth">
+    
+<h3>Search</h3>
+<div id="site_search">
+    <input type="text" id="search_box" placeholder="Search">
+    <button class="btn btn-default" id="site_search_do"><span class="octicon octicon-search"></span></button>
+</div>
+
+<ul id="search_results"></ul>
+
+<link rel="stylesheet" type="text/css" href="/assets/css/modules/sidebar-search.css">
+<script src="/assets/js/lunr.min.js"></script>
+<script src="/assets/js/search.js"></script>
+
+    
+<h3>Post Directory</h3>
+<div id="post-directory-module" class="mobile-hidden">
+  <section class="post-directory">
+  <!-- Links that trigger the jumping -->
+  <!-- Added by javascript below -->
+  <dl></dl>
+  </section>
+</div>
+
+<script src="/assets/js/jquery.toc.js"></script>
+
+  </div>
+</div>
+</section>
+<!-- /section.content -->
+
+    <footer class="container">
+        <div class="site-footer" role="contentinfo">
+            <div class="copyright left mobile-block">
+                    © 2016~2019
+                    <span title="Jevic">Jevic</span>
+                    <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+            </div>
+
+            <ul class="site-footer-links right mobile-hidden">
+                <li>
+                    <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC4.0</a>
+                </li>
+                <li>
+                    <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+                </li>
+            </ul>
+            <a href="http://github.com/jevic/jevic.github.io" target="_blank" aria-label="view source code">
+                <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+            </a>
+            <ul class="site-footer-links mobile-hidden">
+                
+                <li>
+                    <a href="/" title="首页" target="">首页</a>
+                </li>
+                
+                <li>
+                    <a href="/categories/" title="分类" target="">分类</a>
+                </li>
+                
+                <li>
+                    <a href="/wiki/" title="维基" target="">维基</a>
+                </li>
+                
+                <li>
+                    <a href="/open-source/" title="开源" target="">开源</a>
+                </li>
+                
+                <li>
+                    <a href="/links/" title="链接" target="">链接</a>
+                </li>
+                
+                <li>
+                    <a href="/about/" title="关于" target="">关于</a>
+                </li>
+                
+                <li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li>
+            </ul>
+
+        </div>
+    </footer>
+    <!-- / footer -->
+    <script src="/assets/vendor/share.js/dist/js/share.min.js"></script>
+    <script src="/assets/js/geopattern.js"></script>
+    <script src="/assets/js/prism.js"></script>
+    <link rel="stylesheet" href="/assets/css/globals/prism.css">
+    <script>
+      jQuery(document).ready(function($) {
+        // geopattern
+        $('.geopattern').each(function(){
+          $(this).geopattern($(this).data('pattern-id'));
+        });
+       // hljs.initHighlightingOnLoad();
+      });
+    </script>
+    
+    <div style="display:none">
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-82387173-1', 'auto');
+        ga('send', 'pageview');
+
+      </script>
+    </div>
+    
+</body>
+</html>

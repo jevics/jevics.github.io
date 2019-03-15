@@ -1,0 +1,1486 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://0.0.0.0/feed.xml" rel="self" type="application/atom+xml" /><link href="http://0.0.0.0/" rel="alternate" type="text/html" /><updated>2019-03-14T15:35:14+08:00</updated><id>http://0.0.0.0/</id><title type="html">Jevic</title><subtitle>......</subtitle><author><name>Jevic</name></author><entry><title type="html">kubernetes 高可用集群api-server请求异常</title><link href="http://0.0.0.0/2019/03/08/kubernetes-nginxproxy-error/" rel="alternate" type="text/html" title="kubernetes 高可用集群api-server请求异常" /><published>2019-03-08T20:10:46+08:00</published><updated>2019-03-08T20:10:46+08:00</updated><id>http://0.0.0.0/2019/03/08/kubernetes-nginxproxy-error</id><content type="html" xml:base="http://0.0.0.0/2019/03/08/kubernetes-nginxproxy-error/">&lt;p&gt;高可用kubernetes 集群下关于使用nginx代理服务连接超时错误处理&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;报错信息如下图:
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/k8s-nginx-proxy-error.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/rancher/rancher/issues/14971&quot;&gt;issues&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I’ve checked rancher nginx-proxy config and it indeed reports proxy_timeout 5;. When I change the config in-place (setting proxy_timeout to 500) and reload nginx, it works OK.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;通过上面的问题描述可以得出:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;测试发现直连api-server 接口时服务正常。&lt;/p&gt;
+
+&lt;p&gt;由于nginx-proxy &lt;code class=&quot;highlighter-rouge&quot;&gt;proxy_timeout&lt;/code&gt; 默认超时时间太短,导致了连接api-server 超时请求失败;&lt;/p&gt;
+
+&lt;p&gt;所以需要将此 &lt;code class=&quot;highlighter-rouge&quot;&gt;proxy_timeout&lt;/code&gt; 参数适当增大,服务恢复正常;&lt;/p&gt;</content><author><name>Jevic</name></author><summary type="html">高可用kubernetes 集群下关于使用nginx代理服务连接超时错误处理</summary></entry><entry><title type="html">火焰图性能分析 perf</title><link href="http://0.0.0.0/2019/03/03/perf/" rel="alternate" type="text/html" title="火焰图性能分析 perf" /><published>2019-03-03T18:10:46+08:00</published><updated>2019-03-03T18:10:46+08:00</updated><id>http://0.0.0.0/2019/03/03/perf</id><content type="html" xml:base="http://0.0.0.0/2019/03/03/perf/">&lt;blockquote&gt;
+  &lt;p&gt;从 perf 命令（performance 的缩写）讲起，它是 Linux 系统原生提供的性能分析工具，会返回 CPU 正在执行的函数名以及调用栈（stack）。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;通常，它的执行频率是 99Hz（每秒99次），如果99次都返回同一个函数名，那就说明 CPU 这一秒钟都在执行同一个函数，可能存在性能问题。&lt;/p&gt;
+
+&lt;p&gt;通过它，应用程序可以利用 PMU，tracepoint 和内核中的特殊计数器来进行性能统计。
+不但可以分析指定应用程序的性能问题，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈&lt;/p&gt;
+
+&lt;h2 id=&quot;perf&quot;&gt;perf&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;yum install &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; perf 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;perf top&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;用于实时显示当前系统的性能统计信息。该命令主要用来观察整个系统当前的状态，比如可以通过查看该命令的输出来查看当前系统最耗时的内核函数或某个用户进程&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;perf record&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf record -a -e cycles -o cycle.perf -g sleep 10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;-a 对所有 CPU 采样
+-o 输出文件名，如果不指定，默认生成 perf.data
+-g 额外记录函数调用关系
+sleep 10 采样 10s&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf record -F 99 -p 13204 -g -- sleep 30
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;perf record表示记录
+-F 99表示每秒99次 
+-p 13204是进程号，即对哪个进程进行分析
+-g 表示记录调用栈
+sleep 30 如上所述则是持续30秒。&lt;/p&gt;
+
+&lt;p&gt;perf record命令可以统计每个调用栈出现的百分比，然后从高到低排列。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf report -n --stdio
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;perf report&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf report -i &amp;lt;file&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;-i 指定 perf record 生成的 perf data 文件，如果不指定 -i 则默认分析 perf.data 文件。
+–max-stack=0 只输出第一层函数调用
+–stdio 输出到标准输出&lt;/p&gt;
+
+&lt;h2 id=&quot;生成火焰图&quot;&gt;生成火焰图&lt;/h2&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone https://github.com/brendangregg/FlameGraph.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;1、第一步&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf record -e cpu-clock -g -p 28591
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Ctrl+c结束执行后，在当前目录下会生成采样数据perf.data.&lt;/p&gt;
+
+&lt;p&gt;2、第二步
+用perf script工具对perf.data进行解析&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf script -i perf.data &amp;amp;&amp;gt; perf.unfold
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3、第三步&lt;/p&gt;
+
+&lt;p&gt;将perf.unfold中的符号进行折叠：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./stackcollapse-perf.pl perf.unfold &amp;amp;&amp;gt; perf.folded
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4、最后生成svg图：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./flamegraph.pl perf.folded &amp;gt; perf.svg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;使用管道将上面的流程简化为一条命令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf script -i perf.data| ./stackcollapse-perf.pl | ./flamegraph.pl &amp;gt; process.svg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/other/nginx.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;java-应用火焰图生成&quot;&gt;java 应用火焰图生成&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jvm-profiling-tools/async-profiler&quot;&gt;jvm-profiling-tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;获取程序&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget https://github.com/jvm-profiling-tools/async-profiler/releases/download/v1.5/async-profiler-1.5-linux-x64.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./profiler.sh -d 30 -f /tmp/elasticsearch.svg 48211
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;详细使用查看官方介绍即可&lt;/li&gt;
+  &lt;li&gt;下图是我获取elasticsearch 进程的性能图例
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/other/elasticsearch.png&quot; alt=&quot;image&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;参考链接&quot;&gt;参考链接&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.brendangregg.com/perf.html#FlameGraphs&quot;&gt;http://www.brendangregg.com&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/duzilonglove/article/details/79012606&quot;&gt;如何读懂火焰图&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/gatieme/article/details/78885908&quot;&gt;用火焰图进行性能分析&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Jevic</name></author><summary type="html">从 perf 命令（performance 的缩写）讲起，它是 Linux 系统原生提供的性能分析工具，会返回 CPU 正在执行的函数名以及调用栈（stack）。</summary></entry><entry><title type="html">JVM 内存监控</title><link href="http://0.0.0.0/2019/02/15/java-jvm/" rel="alternate" type="text/html" title="JVM 内存监控" /><published>2019-02-15T18:10:46+08:00</published><updated>2019-02-15T18:10:46+08:00</updated><id>http://0.0.0.0/2019/02/15/java-jvm</id><content type="html" xml:base="http://0.0.0.0/2019/02/15/java-jvm/">&lt;blockquote&gt;
+  &lt;p&gt;系统内存并不能反应JVM内存情况，经常碰到JVM内存满掉而系统内存大量空余的情况,或者是由于没有对JVM内存进行有效的监控导致无法及时获取应用最新使用状态；&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;jstat&quot;&gt;jstat&lt;/h2&gt;
+&lt;h3 id=&quot;gcutil&quot;&gt;gcutil&lt;/h3&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;$JAVA_HOME/bin/jstat -gcutil VMID interval count&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;每隔1毫秒输出&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin/jstat &lt;span class=&quot;nt&quot;&gt;-gcutil&lt;/span&gt; 3548 1    
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;每隔1秒输出,且统计五次&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin/jstat &lt;span class=&quot;nt&quot;&gt;-gcutil&lt;/span&gt; 3548 1000 5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  ~ &lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin/jstat &lt;span class=&quot;nt&quot;&gt;-gcutil&lt;/span&gt; 3548
+  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT
+  0.00 100.00  34.69  78.45  96.39  91.25 881491 30503.989     9  350.987 30854.976
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;取heap-size-已使用量百分比值&quot;&gt;取heap size 已使用量百分比值&lt;/h4&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  ~ &lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin/jstat &lt;span class=&quot;nt&quot;&gt;-gcutil&lt;/span&gt; 3548|awk &lt;span class=&quot;s1&quot;&gt;'NR==2 {print $3}'&lt;/span&gt;
+63.28
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;gccause&quot;&gt;gccause&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$JAVA_HOME/bin/jstat -gccause VMID interval count
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;gccapacity&quot;&gt;gccapacity&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$JAVA_HOME/bin/jstat -gccapacity VMID interval count
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;jconsole&quot;&gt;Jconsole&lt;/h2&gt;
+&lt;h3 id=&quot;认证连接&quot;&gt;认证连接&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_OPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=21812 &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+-Dcom.sun.management.jmxremote.authenticate=true &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+-Dcom.sun.management.jmxremote.password.file=/etc/jmx/jmx-spark.password &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+-Dcom.sun.management.jmxremote.access.file=/etc/jmx/jmx-spark.access &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+-Dcom.sun.management.jmxremote.ssl=false&quot;&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;密码文件示例：
+$JAVA_HOME/jre/lib/management&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;无认证连接&quot;&gt;无认证连接&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_OPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-Dcom.sun.management.jmxremote.port=8999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.manageme
+nt.jmxremote.ssl=false&quot;&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;客户端&quot;&gt;客户端&lt;/h3&gt;
+&lt;p&gt;Mac &amp;amp; Windowns 安装配置jdk 后执行jsconsole 即可&lt;/p&gt;</content><author><name>Jevic</name></author><summary type="html">系统内存并不能反应JVM内存情况，经常碰到JVM内存满掉而系统内存大量空余的情况,或者是由于没有对JVM内存进行有效的监控导致无法及时获取应用最新使用状态；</summary></entry><entry><title type="html">helm 私有仓库</title><link href="http://0.0.0.0/2019/01/10/helm-repo/" rel="alternate" type="text/html" title="helm 私有仓库" /><published>2019-01-10T20:35:46+08:00</published><updated>2019-01-10T20:35:46+08:00</updated><id>http://0.0.0.0/2019/01/10/helm-repo</id><content type="html" xml:base="http://0.0.0.0/2019/01/10/helm-repo/">&lt;blockquote&gt;
+  &lt;p&gt;helm 私有本地仓库配置&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;关于helm 安装配置参考&lt;a href=&quot;https://www.jevic.cn/2018/10/13/helm/&quot;&gt;Kubernetes helm 包管理工具&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;开启服务&quot;&gt;开启服务&lt;/h4&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mkdir /opt/helm/charts
+helm serve &lt;span class=&quot;nt&quot;&gt;--address&lt;/span&gt; helm.jevic.cn:8879 &lt;span class=&quot;nt&quot;&gt;--repo-path&lt;/span&gt; /opt/helm/charts &amp;amp;&amp;gt;/dev/null &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;添加仓库&quot;&gt;添加仓库:&lt;/h4&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;helm repo add jevic http://hub.jevic.cn:8879
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;查看仓库列表&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;helm repo list
+
+NAME     	URL
+&lt;span class=&quot;nb&quot;&gt;local    	&lt;/span&gt;http://127.0.0.1:8879
+incubator	https://aliacs-app-catalog.oss-cn-hangzhou.aliyuncs.com/charts-incubator/
+stable   	https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+aliyun   	https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts-incubator/
+jevic    	http://helm.jevic.cn:8879
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;应用上传&quot;&gt;应用上传&lt;/h4&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;c&quot;&gt;## 打包应用&lt;/span&gt;
+cp &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; demoapp /opt/helm/charts
+&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /opt/helm/charts
+helm package demoapp &lt;span class=&quot;nt&quot;&gt;--save&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;## 更新索引&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /opt/helm/charts
+helm repo index &lt;span class=&quot;nt&quot;&gt;--url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;http://helm.jevic.cn:8879 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+helm repo update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h4 id=&quot;部署&quot;&gt;部署&lt;/h4&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;## search&lt;/span&gt;
+helm search demo
+
+NAME         	CHART VERSION	APP VERSION	DESCRIPTION
+jevic/demoapp	0.3.0        	1.0        	A Helm chart DemoApp &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;Kubernetes
+
+
+&lt;span class=&quot;c&quot;&gt;## install&lt;/span&gt;
+helm install &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; appv3 jevic/demoapp
+
+&lt;span class=&quot;c&quot;&gt;## get pods&lt;/span&gt;
+kubectl get pods |grep appv3
+
+appv3-demoapp-79b7f754d5-zbkvd                   1/1     Running   0          91s
+
+&lt;span class=&quot;c&quot;&gt;## list &lt;/span&gt;
+helm &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Jevic</name></author><summary type="html">helm 私有本地仓库配置</summary></entry><entry><title type="html">grafana html 请求显示docker镜像信息</title><link href="http://0.0.0.0/2018/11/27/grafana-text-html/" rel="alternate" type="text/html" title="grafana html 请求显示docker镜像信息" /><published>2018-11-27T19:56:06+08:00</published><updated>2018-11-27T19:56:06+08:00</updated><id>http://0.0.0.0/2018/11/27/grafana-text-html</id><content type="html" xml:base="http://0.0.0.0/2018/11/27/grafana-text-html/">&lt;blockquote&gt;
+  &lt;p&gt;通过grafana 请求应用接口显示Docker镜像的构建版本信息..&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;图例&quot;&gt;图例&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/other/grafana-text-version01.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/other/grafana-text-version02.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;api&quot;&gt;api&lt;/h3&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -sL http://192.168.2.146:9010/version |python -mjson.tool
+{
+    &quot;data&quot;: {
+        &quot;buildtime&quot;: &quot;2018-11-27_17:25:43&quot;,
+        &quot;hash&quot;: &quot;7cd3a541053a9d67eee1706d380af3fe&quot;,
+        &quot;version&quot;: &quot;fa92b4d&quot;
+    },
+    &quot;ok&quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;html-代码&quot;&gt;html 代码&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;div class=&quot;version&quot;&amp;gt;
+
+&amp;lt;/div&amp;gt;
+
+&amp;lt;style&amp;gt;
+    .version ul{
+        list-style:none;
+        padding:0px;
+        margin:0px;
+        width:590px;
+        height:20px;
+        line-height:20px;
+        font-size:12px;
+    }
+    .version ul li{
+        display:block;
+        width:33%;
+        float:left;
+        text-indent:2em
+    }
+    .version .th{
+        background:&quot;gray&quot;;
+        font-weight:bold;
+        border-top:0px
+    }
+&amp;lt;/style&amp;gt;
+
+&amp;lt;script&amp;gt;
+    var hosts = [&quot;192.168.2.2&quot;,&quot;192.168.2.27&quot;,&quot;192.168.2.23&quot;,&quot;192.168.2.25&quot;];
+    var port = 6010;
+
+    function fetch(host,port) {
+        $.ajax({
+            type: &quot;GET&quot;,
+            url: &quot;http://&quot;+host+&quot;:&quot;+port+&quot;/version&quot;,
+            dataType: &quot;json&quot;,
+            success: function(data){
+                var id = &quot;seg-&quot;+host.replace(/\./g,&quot;&quot;)+port;
+                $(&quot;#&quot;+id+&quot;&amp;gt;.version&quot;).text(data[&quot;data&quot;][&quot;version&quot;])
+                $(&quot;#&quot;+id+&quot;&amp;gt;.buildtime&quot;).text(data[&quot;data&quot;][&quot;buildtime&quot;])
+            }
+        });
+    }
+
+    function renderFrame(hosts, port) {
+        var header = &quot;&amp;lt;ul class=\&quot;th\&quot;&amp;gt;\n&quot; +
+            &quot;        &amp;lt;li&amp;gt;Host&amp;lt;/li&amp;gt;\n&quot; +
+            &quot;        &amp;lt;li&amp;gt;版本号&amp;lt;/li&amp;gt;\n&quot; +
+            &quot;        &amp;lt;li&amp;gt;构建时间&amp;lt;/li&amp;gt;\n&quot; +
+            &quot;    &amp;lt;/ul&amp;gt;&quot;;
+        var template = &quot;&amp;lt;ul id=\&quot;\&quot;&amp;gt;\n&quot; +
+            &quot;        &amp;lt;li&amp;gt;&amp;lt;/li&amp;gt;\n&quot; +
+            &quot;        &amp;lt;li class=\&quot;version\&quot;&amp;gt;&amp;lt;/li&amp;gt;\n&quot; +
+            &quot;        &amp;lt;li class=\&quot;buildtime\&quot;&amp;gt;&amp;lt;/li&amp;gt;\n&quot; +
+            &quot;    &amp;lt;/ul&amp;gt;&quot;;
+
+        var frame = header;
+        for(var i = 0; i &amp;lt; hosts.length; i++){
+            var host = hosts[i];
+            var id = &quot;seg-&quot;+host.replace(/\./g,&quot;&quot;)+port;
+            var item = template.replace(&quot;&quot;,id).replace(&quot;&quot;,host+&quot;:&quot;+port);
+            frame += item
+        }
+
+        $(&quot;.version&quot;).append(frame);
+    }
+
+    $(document).ready(function () {
+        renderFrame(hosts, port);
+
+        for(var i = 0; i &amp;lt; hosts.length; i++){
+            var host = hosts[i];
+            window.setInterval(function (host) {
+                fetch(host,port)
+            },10000,host)
+        }
+
+    })
+&amp;lt;/script&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Jevic</name></author><summary type="html">通过grafana 请求应用接口显示Docker镜像的构建版本信息..</summary></entry><entry><title type="html">Rancher Dashboard 管理kubernetes集群</title><link href="http://0.0.0.0/2018/11/25/rancher-dashboard-kubernetes/" rel="alternate" type="text/html" title="Rancher Dashboard 管理kubernetes集群" /><published>2018-11-25T20:35:46+08:00</published><updated>2018-11-25T20:35:46+08:00</updated><id>http://0.0.0.0/2018/11/25/rancher-dashboard-kubernetes</id><content type="html" xml:base="http://0.0.0.0/2018/11/25/rancher-dashboard-kubernetes/">&lt;blockquote&gt;
+  &lt;p&gt;相比kubernetes Dashboard 
+Rancher管理面板简化了很多相对比较&lt;code class=&quot;highlighter-rouge&quot;&gt;复杂&lt;/code&gt;的操作;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;导入kubernetes-集群&quot;&gt;导入kubernetes 集群&lt;/h2&gt;
+&lt;p&gt;这里直接给出截图操作示例&lt;/p&gt;
+
+&lt;p&gt;点击导入集群
+配置集群名称,Roles 默认即可,然后点击 Create&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/rancher-kubernetes-cluster01.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/rancher-kubernetes-cluster02.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;授权用户:
+根据提示获取kubelet configuration file 中的用户名称&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cat ~/.kube/config|grep user ## /etc/kubernetes/kubelet.kubeconfig
+    user: default-auth
+users:
+  user:
+  
+# kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user default-auth
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;部署rancher agent&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;需要注意的是,如果配置了SSL 认证,则最好使用第二条命令，否则可以使用第一条命令执行部署&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;此次使用第二条命令,以免出现证书不可用时忽略报错&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl --insecure -sfL https://192.168.2.218:8443/v3/import/wrmxhfxc7vcfznb9hssmqt9llx278ljqgfj49k5sxhtszrs68r6lmd.yaml | kubectl apply -f -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;最后只需要等待agent 部署成功即可&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/rancher-kubernetes-cluster04.png&quot; alt=&quot;&quot; /&gt;
+ &lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/rancher-kubernetes-cluster03.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;</content><author><name>Jevic</name></author><summary type="html">相比kubernetes Dashboard Rancher管理面板简化了很多相对比较复杂的操作;</summary></entry><entry><title type="html">Elastic Stack 6.4数据探索可视化 Demo</title><link href="http://0.0.0.0/2018/11/23/elastic-stack-6.4-demo/" rel="alternate" type="text/html" title="Elastic Stack 6.4数据探索可视化 Demo" /><published>2018-11-23T19:56:06+08:00</published><updated>2018-11-23T19:56:06+08:00</updated><id>http://0.0.0.0/2018/11/23/elastic-stack-6.4-demo</id><content type="html" xml:base="http://0.0.0.0/2018/11/23/elastic-stack-6.4-demo/">&lt;blockquote&gt;
+  &lt;p&gt;基础安装配置请参考官网或者&lt;a href=&quot;https://www.jevic.cn/categories/#ELK&quot;&gt;ELK 分类&lt;/a&gt;下其他教程示例&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;nginx&quot;&gt;nginx&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;nginx.conf&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;指定日志格式如下:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '
+                      '$status $body_bytes_sent &quot;$http_referer&quot; '
+                      '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';
+
+    log_format jsonTest '{&quot;@timestamp&quot;:&quot;$time_iso8601&quot;,'
+                  '&quot;host&quot;:&quot;$server_addr&quot;,'
+                  '&quot;service&quot;:&quot;nginxTest&quot;,'
+                  '&quot;trace&quot;:&quot;$upstream_http_ctx_transaction_id&quot;,'
+                  '&quot;log&quot;:&quot;log&quot;,'
+                  '&quot;clientip&quot;:&quot;$remote_addr&quot;,'
+                  '&quot;remote_user&quot;:&quot;$remote_user&quot;,'
+                  '&quot;request&quot;:&quot;$request&quot;,'
+                  '&quot;http_user_agent&quot;:&quot;$http_user_agent&quot;,'
+                  '&quot;size&quot;:$body_bytes_sent,'
+                  '&quot;responsetime&quot;:$request_time,'
+                  '&quot;upstreamtime&quot;:&quot;$upstream_response_time&quot;,'
+                  '&quot;upstreamhost&quot;:&quot;$upstream_addr&quot;,'
+                  '&quot;http_host&quot;:&quot;$host&quot;,'
+                  '&quot;url&quot;:&quot;$uri&quot;,'
+                  '&quot;domain&quot;:&quot;$host&quot;,'
+                  '&quot;xff&quot;:&quot;$http_x_forwarded_for&quot;,'
+                  '&quot;referer&quot;:&quot;$http_referer&quot;,'
+                  '&quot;status&quot;:&quot;$status&quot;}';
+
+    access_log  /var/log/nginx/access.log  jsonTest;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;elasticsearch&quot;&gt;elasticsearch&lt;/h2&gt;
+&lt;h3 id=&quot;模板配置&quot;&gt;模板配置&lt;/h3&gt;
+
+&lt;h4 id=&quot;template01&quot;&gt;template01&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;没有配置mapping 不指定字段类型&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+  &quot;order&quot;: 0,
+  &quot;index_patterns&quot;: [
+    &quot;nginxlog-*&quot;
+  ],
+  &quot;settings&quot;: {
+    &quot;index&quot;: {
+      &quot;refresh_interval&quot;: &quot;60s&quot;,
+      &quot;number_of_shards&quot;: &quot;1&quot;,
+      &quot;auto_expand_replicas&quot;: &quot;0-1&quot;,
+      &quot;number_of_replicas&quot;: &quot;1&quot;
+    }
+  },
+  &quot;mappings&quot;: {},
+  &quot;aliases&quot;: {}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;template02&quot;&gt;template02&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;配置mapping 指定字段类型&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+  &quot;order&quot;: 0,
+  &quot;index_patterns&quot;: [
+    &quot;testnginxlog-*&quot;
+  ],
+  &quot;settings&quot;: {
+    &quot;index&quot;: {
+      &quot;number_of_shards&quot;: &quot;1&quot;,
+      &quot;auto_expand_replicas&quot;: &quot;0-1&quot;,
+      &quot;refresh_interval&quot;: &quot;60s&quot;
+    }
+  },
+  &quot;mappings&quot;: {
+    &quot;doc&quot;: {
+    &quot;dynamic&quot;:true,
+      &quot;properties&quot;: {
+        &quot;clientip&quot;: {
+          &quot;type&quot;: &quot;ip&quot;
+        },
+        &quot;host&quot;: {
+          &quot;type&quot;: &quot;ip&quot;
+        },
+        &quot;responsetime&quot;: {
+          &quot;type&quot;: &quot;float&quot;
+        },
+        &quot;size&quot;: {
+          &quot;type&quot;: &quot;long&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;long&quot;
+        },
+        &quot;upstreamtime&quot;: {
+          &quot;type&quot;: &quot;float&quot;,
+          &quot;index&quot;: false
+        }
+      }
+    }
+  },
+  &quot;aliases&quot;: {}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;通过dynamic 参数来控制字段的新增
+    &lt;ul&gt;
+      &lt;li&gt;true(默认) 允许自动新增字段&lt;/li&gt;
+      &lt;li&gt;false 不允许新增字段,但文档可以正常写入,但无法对字段进行查询等操作&lt;/li&gt;
+      &lt;li&gt;strict 文档不能写入,报错&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;index
+    &lt;ul&gt;
+      &lt;li&gt;控制当前字段是否索引,默认为true,记录索引,false不记录,不可搜索&lt;/li&gt;
+      &lt;li&gt;当索引的某些字段不需要被查询搜索时可标记index 为false,以此来减少存储空间(没有倒排索引)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/elasticsearch-template02.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;logstash&quot;&gt;logstash&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;示例中给出了两个索引名称,分别为:
+    &lt;ul&gt;
+      &lt;li&gt;nginxlog_*&lt;/li&gt;
+      &lt;li&gt;testnginxlog-*&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;创建两个配置文件,修改对应的索引名称即可&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;input {
+   file {
+    type =&amp;gt; &quot;proxys&quot;
+    path =&amp;gt; [&quot;/var/log/nginx/access.log&quot;]
+    add_field =&amp;gt; { &quot;sip&quot; =&amp;gt; &quot;192.168.2.243&quot; }
+    ## 是否从头读取数据这里注释掉只读取最新数据
+#    start_position =&amp;gt; &quot;beginning&quot;
+#    sincedb_path =&amp;gt; &quot;/dev/null&quot;
+#    ignore_older =&amp;gt; &quot;99999999999&quot;
+    codec =&amp;gt; &quot;json&quot;
+  }
+}
+
+filter {
+date {
+        match =&amp;gt; [&quot;timestamp&quot;,&quot;UNIX&quot;]
+        target =&amp;gt; &quot;@timestamp&quot;
+ }
+#mutate {
+#        remove_field =&amp;gt; [&quot;path&quot;,&quot;host&quot;,&quot;tags&quot;,&quot;message&quot;]
+#}
+}
+
+output{
+        elasticsearch {
+        hosts =&amp;gt; [&quot;http://192.168.2.221:9200&quot;]
+        #index =&amp;gt; &quot;nginxlog_%{+YYYY.MM.dd}&quot;
+        index =&amp;gt; &quot;testnginxlog-%{+YYYY.MM.dd}&quot;
+    }
+ #      stdout {
+ #           codec =&amp;gt; rubydebug
+ #      }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;启动进程&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$LOGSTAH_PATH/bin/logstash -f nginxlog.conf --log.level=info --path.data=/tmp/nginxlog
+
+$LOGSTAH_PATH/bin/logstash -f testnginxlog.conf --log.level=info --path.data=/tmp/testnginxlog
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;查看索引mapping&quot;&gt;查看索引mapping&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;在 elasticsearch 2.x 版本，字符串数据只有string类型
+更新到5.x版本后，取消了string 数据类型，代替它的是 keyword 和 text 数据类型&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Mapping 类似数据库中的表结构定义,主要作用如下:
+    &lt;ul&gt;
+      &lt;li&gt;定义index 下的字段名(Field Name)&lt;/li&gt;
+      &lt;li&gt;定义字段的类型,比如: 数值型、字符串型、布尔型等&lt;/li&gt;
+      &lt;li&gt;定义倒排索引相关配置,比如是否索引、记录position等&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;默认: “key”:”value” 格式的都默认为text类型
+而对于”key”: value 格式的会根据数值类型进行格式匹配&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;例如:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+....
+&quot;responsetime&quot;: 0.001, 
+&quot;upstreamtime&quot;: &quot;0.001&quot;,
+...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;responsetime: 匹配为fload 类型&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;upstreamtime: 匹配为text类型,此时如果想要做聚合查询以及计算数值需要配置mapping 指定字段类型&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ol&gt;
+      &lt;li&gt;text类型：会分词，先把对象进行分词处理，然后再再存入到es中。&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;当使用多个单词进行查询的时候，当然查不到已经分词过的内容！&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;ol&gt;
+      &lt;li&gt;keyword：不分词，没有把es中的对象进行分词处理，而是存入了整个对象！&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这时候当然可以进行完整地查询！默认是256个字符！&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;“ignore_above”: 256  详情查看&lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/6.5/ignore-above.html&quot;&gt;官网文档&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;nginxlog_&quot;&gt;nginxlog_*&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/index-mapping01.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;testnginxlog-&quot;&gt;testnginxlog-*&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/index-mapping-02.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;kibana&quot;&gt;kibana&lt;/h2&gt;
+&lt;h3 id=&quot;添加索引&quot;&gt;添加索引&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/kibana-add-index01.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/kibana-add-index02.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/kibana-add-index03.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;监控图表&quot;&gt;监控图表&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/kibana-monitoring.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;grafana&quot;&gt;grafana&lt;/h2&gt;
+
+&lt;h3 id=&quot;runing-of-docker&quot;&gt;runing of docker&lt;/h3&gt;
+&lt;p&gt;默认用户名密码: admin:admin&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run -d \
+--name grafana \
+-p 3000:3000 \
+-v /var/lib/grafana:/var/lib/grafana
+-v /etc/grafana:/etc/grafana
+-v /etc/localtime:/etc/localtime
+grafana/grafana
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;数据源&quot;&gt;数据源&lt;/h3&gt;
+&lt;p&gt;这里ES 版本选择5.6+即可&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-datasource01.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;demo&quot;&gt;demo&lt;/h3&gt;
+&lt;p&gt;需要注意的是: 对于nginxlog_* 这个索引. Group by 时写入的是 clientip.keyword;
+因为没有指定字段类型,如果直接写入 clientip 则会报错无法显示;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-nginx-demo01.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-nginx-demo02.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-nginx-demo03.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;变量&quot;&gt;变量&lt;/h3&gt;
+
+&lt;p&gt;配置完成后,点击add 添加即可&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-variables01.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-var-nodeip.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;变量引用,和shell 变量调用方式一样使用 ${变量名}即可&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;clientip: $ip
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;注意: 这里Group by 时状态码字段 直接指定为: status 即可
+因为根据前面我们的配置,对testnginxlog-* 索引模板中指定了字段类型&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-testnginxlog.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;图表展示:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/elasticsearch/grafana-demo-last.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;</content><author><name>Jevic</name></author><summary type="html">基础安装配置请参考官网或者ELK 分类下其他教程示例</summary></entry><entry><title type="html">elastic-stack 6.5</title><link href="http://0.0.0.0/2018/11/22/elastic-stack-6.5/" rel="alternate" type="text/html" title="elastic-stack 6.5" /><published>2018-11-22T19:56:06+08:00</published><updated>2018-11-22T19:56:06+08:00</updated><id>http://0.0.0.0/2018/11/22/elastic-stack-6.5</id><content type="html" xml:base="http://0.0.0.0/2018/11/22/elastic-stack-6.5/">&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;在以往的旧版本(2.x,5.x) 每个索引可以存储不同类型的文档,
+      &lt;ul&gt;
+        &lt;li&gt;类比MySQL
+          &lt;ul&gt;
+            &lt;li&gt;index == database&lt;/li&gt;
+            &lt;li&gt;_type == table&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;6.x 版本开始 移除了_type  也就是每个索引只有一种类型！！！&lt;/li&gt;
+    &lt;li&gt;x-pack 从6.3版本开始已经内置在elasticsearch,kibana 当中无需另行安装!&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;elasticsearch&quot;&gt;elasticsearch&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.elastic.co/downloads&quot;&gt;官网下载&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;下载解压&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;配置基础环境&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cat /etc/security/limit.conf
+* soft nofile 65536
+* hard nofile 65536
+* soft nproc unlimited
+* hard nproc unlimited
+es soft memlock unlimited
+es hard memlock unlimited
+  
+# cat /etc/sysctl.conf
+vm.swappiness = 1
+vm.max_map_count=262144
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;添加 es 用户并授权&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;启动&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;授权 license （30天试用版）&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;证书申请: https://register.elastic.co/marvel_register&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -H &quot;Content-Type:application/json&quot; -XPOST  http://192.168.2.221:9200/_xpack/license/start_trial?acknowledge=true
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;x-pack-开启认证&quot;&gt;x-pack 开启认证&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;配置用户名密码:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;$ES_PATH:/bin/elasticsearch-setup-passwords interactive&lt;/li&gt;
+      &lt;li&gt;根据提示一步步设置密码即可&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;修改 elasticsearch 配置文件&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# tail elasticsearch.yml -n 1
+xpack.security.enabled: true  ## 开启认证
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;重启ES，再次访问则需要输入用户名密码&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;修改密码&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -H &quot;Content-Type:application/json&quot; -XPOST -u elastic 'http://192.168.2.221:9200/_xpack/security/user/elastic/_password' -d '{ &quot;password&quot; : &quot;123456&quot; }'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;kibana&quot;&gt;kibana&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;配置对应的用户名密码以及 ES 链接地址&lt;/li&gt;
+  &lt;li&gt;配置文件添加此配置:
+    &lt;ul&gt;
+      &lt;li&gt;xpack.security.enabled: true&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;启动即可&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;cerebro&quot;&gt;cerebro&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/lmenezes/cerebro&quot;&gt;github&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;具体步骤查看文档即可&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;sql-插件&quot;&gt;sql 插件&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/NLPchina/elasticsearch-sql&quot;&gt;github&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;转载请注明出处，本文采用 &lt;a href=&quot;http://creativecommons.org/licenses/by-nc-nd/4.0/&quot;&gt;CC4.0&lt;/a&gt; 协议授权&lt;/p&gt;</content><author><name>Jevic</name></author><summary type="html">在以往的旧版本(2.x,5.x) 每个索引可以存储不同类型的文档, 类比MySQL index == database _type == table 6.x 版本开始 移除了_type 也就是每个索引只有一种类型！！！ x-pack 从6.3版本开始已经内置在elasticsearch,kibana 当中无需另行安装!</summary></entry><entry><title type="html">kubernetes nginx-ingress and traefik</title><link href="http://0.0.0.0/2018/10/25/ingresss-traefik/" rel="alternate" type="text/html" title="kubernetes nginx-ingress and traefik" /><published>2018-10-25T22:35:46+08:00</published><updated>2018-10-25T22:35:46+08:00</updated><id>http://0.0.0.0/2018/10/25/ingresss-traefik</id><content type="html" xml:base="http://0.0.0.0/2018/10/25/ingresss-traefik/">&lt;p&gt;在Kubernetes中，服务和Pod的IP地址仅可以在集群网络内部使用，对于集群外的应用是不可见的。为了使外部的应用能够访问集群内的服务，在Kubernetes中可以通过NodePort和LoadBalancer这两种类型的服务，或者使用Ingress。Ingress本质是通过http代理服务器将外部的http请求转发到集群内部的后端服务。&lt;/p&gt;
+
+&lt;h2 id=&quot;一-证书可选配置&quot;&gt;一. 证书(可选配置)&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;使用已购买的证书&lt;/li&gt;
+  &lt;li&gt;配置自签名证书&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# openssl genrsa -out jevic_key.pem 4096
+Generating RSA private key, 4096 bit long modulus
+.....................++
+.....++
+e is 65537 (0x10001)
+[root@master219 ssl]# openssl req -new -x509 -key jevic_key.pem -out root.crt -days 3650
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:GD
+State or Province Name (full name) []:GD
+Locality Name (eg, city) [Default City]:SZ
+Organization Name (eg, company) [Default Company Ltd]:jevic
+Organizational Unit Name (eg, section) []:jevic
+Common Name (eg, your name or your server's hostname) []:jevic.cn
+Email Address []:admin@jevic.cn
+[root@master219 ssl]# ls
+jevic_key.pem  root.crt
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;二-nginx-ingress&quot;&gt;二. nginx-ingress&lt;/h2&gt;
+&lt;h3 id=&quot;21-部署&quot;&gt;2.1 部署&lt;/h3&gt;
+&lt;p&gt;如果kubernetes 集群启用了RBAC，则一定要加rbac.create=true参数
+helm 安装请参考&lt;a href=&quot;https://www.jevic.cn/2018/10/13/helm/&quot;&gt;Kubernetes helm 包管理工具&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;helm install stable/nginx-ingress --set controller.hostNetwork=true，rbac.create=true
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;查看状态:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# helm list
+NAME            	REVISION	UPDATED                 	STATUS  	CHART              	APP VERSION	NAMESPACE
+quiet-abalone   	1       	Thu Nov 29 19:55:28 2018	DEPLOYED	nginx-ingress-0.9.5	0.10.2     	default
+
+# kubectl get all --all-namespaces -l app=nginx-ingress
+NAMESPACE   NAME                                                               READY     STATUS    RESTARTS   AGE
+default     pod/quiet-abalone-nginx-ingress-controller-7b8b745f96-gczjl        1/1       Running   1          5d
+default     pod/quiet-abalone-nginx-ingress-default-backend-54f4fb569c-ndh4x   1/1       Running   1          5d
+
+NAMESPACE   NAME                                                  TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+default     service/quiet-abalone-nginx-ingress-controller        LoadBalancer   10.254.235.53   &amp;lt;pending&amp;gt;     80:45608/TCP,443:40984/TCP   5d
+default     service/quiet-abalone-nginx-ingress-default-backend   ClusterIP      10.254.20.221   &amp;lt;none&amp;gt;        80/TCP                       5d
+
+NAMESPACE   NAME                                                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+default     deployment.apps/quiet-abalone-nginx-ingress-controller        1         1         1            1           5d
+default     deployment.apps/quiet-abalone-nginx-ingress-default-backend   1         1         1            1           5d
+
+NAMESPACE   NAME                                                                     DESIRED   CURRENT   READY     AGE
+default     replicaset.apps/quiet-abalone-nginx-ingress-controller-7b8b745f96        1         1         1         5d
+default     replicaset.apps/quiet-abalone-nginx-ingress-default-backend-54f4fb569c   1         1         1         5d
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;22-nginx-负载均衡测试&quot;&gt;2.2 nginx 负载均衡测试&lt;/h3&gt;
+
+&lt;h4 id=&quot;221-nginx-demoyaml&quot;&gt;2.2.1 nginx-demo.yaml&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-demo
+  labels:
+    app: my-nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: my-nginx
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: my-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-nginx
+    spec:
+      containers:
+      - image: nginx/nginx:1.7.9
+        name: nginx-demo
+        ports:
+        - containerPort: 80
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;222-ingress-nginx-demoyaml&quot;&gt;2.2.2 ingress-nginx-demo.yaml&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress-demo
+  namespace: default
+#  annotations:
+#    kubernetes.io/ingress.class: &quot;public&quot;
+#    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: test.nginx.com
+    http:
+      paths:
+      - backend:
+          serviceName: nginx-demo
+          servicePort: 80
+        path: /
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;三-traefik&quot;&gt;三. traefik&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/containous/traefik/tree/master/examples/k8s&quot;&gt;官网 yaml文档&lt;/a&gt;
+&lt;a href=&quot;https://docs.traefik.io/user-guide/kubernetes/&quot;&gt;docs.traefik.io&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;31-traefik-insecureyaml&quot;&gt;3.1 traefik-insecure.yaml&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;只开启了http 请求访问&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - &quot;&quot;
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: traefik-conf
+  namespace: kube-system
+data:
+  traefik.toml: |
+    insecureSkipVerify = true
+    defaultEntryPoints = [&quot;http&quot;]
+    [entryPoints]
+      [entryPoints.http]
+      address = &quot;:80&quot;
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      terminationGracePeriodSeconds: 60
+      hostNetwork: true
+      volumes:
+      - name: config
+        configMap:
+          name: traefik-conf
+      containers:
+      - image: k8s.jevic.cn/kubernetes/traefik:1.7.3
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+          hostPort: 80
+        - name: admin
+          containerPort: 8080
+        securityContext:
+          privileged: true
+        args:
+        - --configfile=/config/traefik.toml
+        - -d
+        - --web
+        - --kubernetes
+        - --web.address=0.0.0.0:8081
+        volumeMounts:
+        - mountPath: &quot;/config&quot;
+          name: &quot;config&quot;
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+    - protocol: TCP
+      port: 443
+      name: https
+  type: NodePort
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: ingress.jevic.cn
+    http:
+      paths:
+      - backend:
+          serviceName: traefik-web-ui
+          servicePort: 80
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create -f traefik-insecure.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后等待服务正常启动即可&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# kubectl get pod -n kube-system -l k8s-app=traefik-ingress-lb
+NAME                               READY     STATUS    RESTARTS   AGE
+traefik-ingress-controller-mv8cg   1/1       Running   0          4d
+traefik-ingress-controller-vvfc7   1/1       Running   0          4d
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;32-traefik-httpsyaml&quot;&gt;3.2 traefik-https.yaml&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;开启http 和 https 访问&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;321-创建-secret&quot;&gt;3.2.1 创建 secret&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;这里使用购买的证书,也可以使用自签名证书测试；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create secret tls ssl --cert=jevic.cert --key=jevic.key -n kube-system
+kubectl get secret -n kube-system
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;这里注意namespace 一定要配置为kube-system&lt;/p&gt;
+
+&lt;h4 id=&quot;322-traefik-httpsyaml&quot;&gt;3.2.2 traefik-https.yaml&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - &quot;&quot;
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: traefik-conf
+  namespace: kube-system
+data:
+  traefik.toml: |
+    insecureSkipVerify = true
+    defaultEntryPoints = [&quot;http&quot;,&quot;https&quot;]
+    [entryPoints]
+      [entryPoints.http]
+      address = &quot;:80&quot;
+      [entryPoints.https]
+      address = &quot;:443&quot;
+        [entryPoints.https.tls]
+          [[entryPoints.https.tls.certificates]]
+          CertFile = &quot;/ssl/tls.crt&quot;
+          KeyFile = &quot;/ssl/tls.key&quot;
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      terminationGracePeriodSeconds: 60
+      hostNetwork: true
+      volumes:
+      - name: ssl
+        secret:
+          secretName: ssl
+      - name: config
+        configMap:
+          name: traefik-conf
+      containers:
+      - image: k8s.jevic.cn/kubernetes/traefik:latest
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+          hostPort: 80
+        - name: admin
+          containerPort: 8081
+        securityContext:
+          privileged: true
+        args:
+        - --configfile=/config/traefik.toml
+        - -d
+        - --web
+        - --kubernetes
+        - --web.address=0.0.0.0:8081
+        volumeMounts:
+        - mountPath: &quot;/ssl&quot;
+          name: &quot;ssl&quot;
+        - mountPath: &quot;/config&quot;
+          name: &quot;config&quot;
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8081
+      name: admin
+    - protocol: TCP
+      port: 443
+      name: https
+  type: NodePort
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+  - port: 80
+    targetPort: 8081
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: ingress.jevic.cn
+    http:
+      paths:
+      - backend:
+          serviceName: traefik-web-ui
+          servicePort: 80
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;默认端口: 8080 这里手动指定了web-ui端口为:8081&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- --web.address=0.0.0.0:8081
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;33-目录结构&quot;&gt;3.3 目录结构&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;├── jevic.cert
+├── jevic.key
+├── nginx-demo
+│   ├── ingress-nginx-traefik.yaml
+│   └── nginx-demo.yaml
+├── traefik-https.yaml
+└── traefik-insecure.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;34-traefik-nginx-demo&quot;&gt;3.4 traefik nginx-demo&lt;/h3&gt;
+
+&lt;h4 id=&quot;nginx-deployment-demoyaml&quot;&gt;nginx-deployment-demo.yaml&lt;/h4&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-demo
+  labels:
+    nginx: nginx-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      nginx: nginx-demo
+  template:
+    metadata:
+      labels:
+        nginx: nginx-demo
+    spec:
+      containers:
+      - name: nginx-demo
+        image: nginx/nginx:1.7.9
+        ports:
+        - name: https
+          containerPort: 443
+        - name: http
+          containerPort: 80
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;nginx-svc-demoyaml&quot;&gt;nginx-svc-demo.yaml&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-demo
+  labels:
+    nginx: nginx-demo
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+  - port: 443
+    protocol: TCP
+    targetPort: 443
+    name: https
+  selector:
+    nginx: nginx-demo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;ingress-nginx-traefikyaml&quot;&gt;ingress-nginx-traefik.yaml&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress-demo
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: nginx.jevic.cn
+    http:
+      paths:
+      - backend:
+          serviceName: nginx-demo
+          servicePort: 80
+        path: /
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;部署&quot;&gt;部署&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ls
+ingress-nginx-traefik.yaml  nginx-deployment-demo.yaml  nginx-rc-demo.yaml  nginx-svc-demo.yaml
+# kubectl apply -f nginx-deployment-demo.yaml
+deployment.apps &quot;nginx-demo&quot; created
+# kubectl create -f nginx-svc-demo.yaml
+service &quot;nginx-demo&quot; created
+# kubectl create -f ingress-nginx-traefik.yaml
+ingress.extensions &quot;nginx-ingress-demo&quot; created
+# kubectl get all -l nginx=nginx-demo
+NAMESPACE   NAME                            READY     STATUS    RESTARTS   AGE
+default     pod/nginx-demo-c8765675-phr2w   1/1       Running   0          1m
+default     pod/nginx-demo-c8765675-z7tgn   1/1       Running   0          1m
+
+NAMESPACE   NAME                         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+default     deployment.apps/nginx-demo   2         2         2            2           1m
+
+NAMESPACE   NAME                                  DESIRED   CURRENT   READY     AGE
+default     replicaset.apps/nginx-demo-c8765675   2         2         2         1m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/kubernetes-ingress-traefik01.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/jevic/images/master/kubernetes/kubernetes-ingress-traefik02.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;</content><author><name>Jevic</name></author><summary type="html">在Kubernetes中，服务和Pod的IP地址仅可以在集群网络内部使用，对于集群外的应用是不可见的。为了使外部的应用能够访问集群内的服务，在Kubernetes中可以通过NodePort和LoadBalancer这两种类型的服务，或者使用Ingress。Ingress本质是通过http代理服务器将外部的http请求转发到集群内部的后端服务。</summary></entry><entry><title type="html">kafka 压力测试</title><link href="http://0.0.0.0/2018/10/21/kafka-perf-test/" rel="alternate" type="text/html" title="kafka 压力测试" /><published>2018-10-21T18:10:46+08:00</published><updated>2018-10-21T18:10:46+08:00</updated><id>http://0.0.0.0/2018/10/21/kafka-perf-test</id><content type="html" xml:base="http://0.0.0.0/2018/10/21/kafka-perf-test/">&lt;p&gt;kafka 内置提供了压测脚本&lt;/p&gt;
+
+&lt;h2 id=&quot;kafka-版本&quot;&gt;kafka 版本&lt;/h2&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ find /opt/kafka/libs/ -name \*kafka_\* | head -1 | grep -o '\kafka[^\n]*'
+kafka/libs/kafka_2.11-1.0.0.2.6.5.1050-37-javadoc.jar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;producer测试&quot;&gt;Producer测试&lt;/h2&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ./bin/kafka-producer-perf-test.sh \
+--topic test \
+--num-records 1000000 \
+--record-size 3000 \
+--throughput 20000 \
+--producer-props bootstrap.servers=192.168.25.198:6667,192.168.25.199:6667,192.168.25.200:6667,192.168.25.201:6667,192.168.25.202:6667
+
+99914 records sent, 19978.8 records/sec (57.16 MB/sec), 124.9 ms avg latency, 566.0 max latency.
+99292 records sent, 19858.4 records/sec (56.82 MB/sec), 7.1 ms avg latency, 214.0 max latency.
+96498 records sent, 19299.6 records/sec (55.22 MB/sec), 117.3 ms avg latency, 1096.0 max latency.
+95601 records sent, 19120.2 records/sec (54.70 MB/sec), 269.1 ms avg latency, 2194.0 max latency.
+108777 records sent, 21755.4 records/sec (62.24 MB/sec), 340.9 ms avg latency, 2665.0 max latency.
+100020 records sent, 20004.0 records/sec (57.23 MB/sec), 1.3 ms avg latency, 20.0 max latency.
+100051 records sent, 20010.2 records/sec (57.25 MB/sec), 1.3 ms avg latency, 20.0 max latency.
+99987 records sent, 19997.4 records/sec (57.21 MB/sec), 1.3 ms avg latency, 27.0 max latency.
+100036 records sent, 20007.2 records/sec (57.24 MB/sec), 1.3 ms avg latency, 21.0 max latency.
+1000000 records sent, 19992.402887 records/sec (57.20 MB/sec), 87.97 ms avg latency, 2665.00 ms max latency, 1 ms 50th, 500 ms 95th, 2202 ms 99th, 2613 ms 99.9th.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;–topic topic名称，本例为test_perf&lt;/p&gt;
+
+&lt;p&gt;–num-records 总共需要发送的消息数，本例为1000000&lt;/p&gt;
+
+&lt;p&gt;–record-size 每个记录的字节数，本例为1000&lt;/p&gt;
+
+&lt;p&gt;–throughput 每秒钟发送的记录数，本例为20000&lt;/p&gt;
+
+&lt;p&gt;–producer-props bootstrap.servers=localhost:9092 发送端的配置信息&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;上面示例可以看出 平均每秒写入57.20MB数据,大概是19992条消息&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;每次写入的平均延迟是: 87.98 毫秒&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;最大延迟是: 2665.00 毫秒&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;consumer-测试&quot;&gt;Consumer 测试&lt;/h2&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./bin/kafka-consumer-perf-test.sh 
+--topic test \
+--fetch-size 1048576 \
+--messages 1000000 \
+--threads 20 \
+--hide-header \
+--broker-list 192.168.25.198:6667,192.168.25.199:6667,192.168.25.200:6667,192.168.25.201:6667,192.168.25.202:6667
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;–topic 指定topic的名称，本例为test_perf&lt;/p&gt;
+
+&lt;p&gt;–fetch-size 指定每次fetch的数据的大小，本例为1048576，也就是1M&lt;/p&gt;
+
+&lt;p&gt;–messages 总共要消费的消息个数，本例为1000000，100w&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;删除topic&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./kafka-topics.sh --zookeeper 192.168.25.198:2181 --delete --topic test
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;可逐一增大数量级以及消息个数等参数 对比结果;&lt;/li&gt;
+  &lt;li&gt;详细的参数信息直接执行脚本查看帮助信息;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Jevic</name></author><summary type="html">kafka 内置提供了压测脚本</summary></entry></feed>
